@@ -2,7 +2,7 @@
 
 This repository contains an Ansible role for [installing Node.js on Debian servers](https://nodejs.org/en/download/package-manager/).
 
-To use this role you need to use Ansible Galaxy to install it into another repository by adding a `requirements.yml` file in that repo that contains:
+To use this role you need to use Ansible Galaxy to install it into another repository under `galaxy/roles/nodejs` by adding a `requirements.yml` file in that repo that contains:
 
 ```yml
 ---
