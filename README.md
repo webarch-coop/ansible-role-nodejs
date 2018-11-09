@@ -7,15 +7,26 @@ To use this role you need to use Ansible Galaxy to install it into another repos
 ```yml
 ---
 - name: nodejs
-  src: https://git.coop/webarch/upgrade.git
+  src: https://git.coop/webarch/nodejs.git
   version: master
   scm: git
+```
+
+And a `ansible.cfg` that contains:
+
+```
+[defaults]
+retry_files_enabled = False
+pipelining = True
+inventory = inventory
+roles_path = galaxy/roles
+
 ```
 
 To pull this repo in run:
 
 ```bash
-ansible-galaxy install -r requirements.yml --force -p webarch/roles 
+ansible-galaxy install -r requirements.yml --force -p galaxy/roles 
 ```
 
 The other repo should also contain a `nodejs.yml` file that contains:
@@ -29,7 +40,7 @@ The other repo should also contain a `nodejs.yml` file that contains:
     - stretch_servers
 
   roles:
-    - webarch/nodejs
+    - galaxy/roles/nodejs
 ```
 
 And a `hosts.yml` file that contains lists of servers, for example:
