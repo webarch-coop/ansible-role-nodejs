@@ -19,6 +19,7 @@
 
 - name: Nodesource APT source repo available
   apt_repository:
+    name: nodejs
     repo: "deb-src https://deb.nodesource.com/node_10.x stretch main"
     state: present
 
