@@ -1,0 +1,29 @@
+---
+- name: apt-transport-https package present 
+  apt:
+    pkg: apt-transport-https
+    state: latest
+    update_cache: yes
+
+- name: Nodesource GPG key present
+  apt_key:
+    id: 9FD3B784BC1C6FC31A8A0A1C1655A0AB68576280
+    url: https://deb.nodesource.com/gpgkey/nodesource.gpg.key
+    state: present
+  
+- name: Nodesource APT repo available
+  apt_repository:
+    name: nodejs
+    repo: "deb https://deb.nodesource.com/node_10.x stretch main"
+    state: present
+
+- name: Nodesource APT source repo available
+  apt_repository:
+    repo: "deb-src https://deb.nodesource.com/node_10.x stretch main"
+    state: present
+
+- name: nodejs package present 
+  apt:
+    pkg: nodejs
+    state: latest
+    update_cache: no
