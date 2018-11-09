@@ -18,7 +18,7 @@ And a `ansible.cfg` that contains:
 [defaults]
 retry_files_enabled = False
 pipelining = True
-inventory = inventory
+inventory = hosts.yml
 roles_path = galaxy/roles
 
 ```
@@ -26,7 +26,7 @@ roles_path = galaxy/roles
 To pull this repo in run:
 
 ```bash
-ansible-galaxy install -r requirements.yml --force -p galaxy/roles 
+ansible-galaxy install -r requirements.yml --force
 ```
 
 The other repo should also contain a `nodejs.yml` file that contains:
@@ -40,7 +40,7 @@ The other repo should also contain a `nodejs.yml` file that contains:
     - stretch_servers
 
   roles:
-    - galaxy/roles/nodejs
+    - nodejs
 ```
 
 And a `hosts.yml` file that contains lists of servers, for example:
@@ -61,5 +61,5 @@ all:
 Then it can be run as follows:
 
 ```bash
-ansible-playbook nodejs.yml -i hosts.yml
+ansible-playbook nodejs.yml 
 ```
