@@ -18,7 +18,7 @@
 - name: Nodesource APT repo available
   apt_repository:
     filename: nodejs
-    repo: "deb https://deb.nodesource.com/node_10.x stretch main"
+    repo: "deb https://deb.nodesource.com/node_{{ nodejs_version }}.x stretch main"
     state: present
   tags:
     - nodejs
@@ -26,7 +26,7 @@
 - name: Nodesource APT source repo available
   apt_repository:
     filename: nodejs
-    repo: "deb-src https://deb.nodesource.com/node_10.x stretch main"
+    repo: "deb-src https://deb.nodesource.com/node_{{ nodejs_version }}.x stretch main"
     state: present
   tags:
     - nodejs
