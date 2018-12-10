@@ -1,5 +1,5 @@
 ---
-- name: apt-transport-https package present 
+- name: apt-transport-https package present
   apt:
     pkg: apt-transport-https
     state: latest
@@ -14,7 +14,7 @@
     state: present
   tags:
     - nodejs
-  
+
 - name: Nodesource APT repo available
   apt_repository:
     filename: nodejs
@@ -31,7 +31,7 @@
   tags:
     - nodejs
 
-- name: nodejs package present 
+- name: nodejs package present
   apt:
     pkg: nodejs
     state: latest
