@@ -31,7 +31,16 @@
   tags:
     - nodejs
 
-- name: nodejs package present
+- name: Potentially conflicting sources.lists absent
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+    - /etc/apt/sources.list.d/nodesource.list
+  tags:
+    - nodejs
+
+- name: Nodejs package present
   apt:
     pkg: nodejs
     state: latest
