@@ -15,6 +15,18 @@
   tags:
     - nodejs
 
+- name: Nodesource sources.lists absent
+  file:
+    path: "{{ file }}"
+    state: absent
+  loop:
+    - /etc/apt/sources.list.d/nodesource.list
+    - /etc/apt/sources.list.d/nodejs.list
+  loop_control:
+    loop_var: file
+  tags:
+    - nodejs
+
 - name: Nodesource APT repo available
   apt_repository:
     filename: nodejs
@@ -28,15 +40,6 @@
     filename: nodejs
     repo: "deb-src https://deb.nodesource.com/node_{{ nodejs_version }}.x stretch main"
     state: present
-  tags:
-    - nodejs
-
-- name: Potentially conflicting sources.lists absent
-  file:
-    path: "{{ item }}"
-    state: absent
-  with_items:
-    - /etc/apt/sources.list.d/nodesource.list
   tags:
     - nodejs
 
