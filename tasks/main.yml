@@ -65,7 +65,7 @@
     pkg:
       - nodejs
     state: present
-    update_cache: true 
+    update_cache: true
   tags:
     - nodejs
 ...
