@@ -1,4 +1,5 @@
 ---
-# Best track the latest Active LTS
+# Track the latest Active LTS
 # See https://nodejs.org/en/about/releases/
 nodejs_version: 10
+...
