@@ -47,4 +47,10 @@
     upgrade: true
   tags:
     - nodejs
+
+- name: Packages upgraded
+  apt:
+    upgrade: true
+  tags:
+    - nodejs
 ...
