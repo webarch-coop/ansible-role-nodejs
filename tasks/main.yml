@@ -44,6 +44,7 @@
       - nodejs
     state: present
     update_cache: true
+    upgrade: true
   tags:
     - nodejs
 ...
