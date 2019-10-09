@@ -21,7 +21,7 @@
   set_fact:
     nodejs_distro: "{{ nodejs_distro_check.stdout }}"
   tags:
-    - apt
+    - nodejs
 
 - name: Nodesource GPG key present
   apt_key:
