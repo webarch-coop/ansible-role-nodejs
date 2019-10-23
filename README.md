@@ -2,8 +2,7 @@
 
 This repository contains an Ansible role for [installing Node.js on Debian servers](https://nodejs.org/en/download/package-manager/).
 
-The role will currently install Node.js v11.x by default, [the other available versions](https://github.com/nodesource/distributions/blob/master/README.md#installation-instructions)
-are 10, 8 and 6.
+The role will currently install Node.js v12.x by default, [the other available versions](https://github.com/nodesource/distributions/blob/master/README.md#installation-instructions).
 
 To use this role you need to use Ansible Galaxy to install it into another repository under `galaxy/roles/nodejs` by adding a `requirements.yml` file in that repo that contains:
 
