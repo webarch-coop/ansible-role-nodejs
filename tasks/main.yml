@@ -21,7 +21,7 @@
   set_fact:
     nodejs_distro: "{{ nodejs_distro_check.stdout }}"
   tags:
-    - apt
+    - nodejs
 
 - name: Nodesource GPG key present
   apt_key:
@@ -31,32 +31,10 @@
   tags:
     - nodejs
 
-- name: Nodesource sources.lists absent
-  file:
-    path: "{{ file }}"
-    state: absent
-  loop:
-    - /etc/apt/sources.list.d/nodesource.list
-    - /etc/apt/sources.list.d/nodejs.list
-  loop_control:
-    loop_var: file
-  tags:
-    - nodejs
-
 - name: Nodesource APT repo available
-  apt_repository:
-    filename: nodejs
-    repo: "deb https://deb.nodesource.com/node_{{ nodejs_version }}.x {{ nodejs_distro }} main"
-    state: present
-  tags:
-    - nodejs
-
-- name: Nodesource APT source repo available
-  apt_repository:
-    filename: nodejs
-    repo: "deb-src https://deb.nodesource.com/node_{{ nodejs_version }}.x {{ nodejs_distro }} main"
-    state: present
-  when: nodejs_src == True
+  template:
+    src: templates/nodejs.list.j2
+    dest: /etc/apt/sources.list.d/nodejs.list
   tags:
     - nodejs
 
@@ -64,7 +42,7 @@
   apt:
     pkg:
       - nodejs
-    state: present
+    state: latest
     update_cache: true
   tags:
     - nodejs
