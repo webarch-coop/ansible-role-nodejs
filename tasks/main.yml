@@ -38,6 +38,42 @@
   tags:
     - nodejs
 
+- name: Check if nodejs is already installed
+  shell: which nodejs || echo absent
+  check_mode: false
+  register: nodejs_path_check
+  changed_when: '"nodejs" not in nodejs_path_check.stdout'
+  tags:
+    - nodejs
+
+- name: Check version of nodejs
+  block:
+
+    - name: Version of nodejs installed
+      command: nodejs --version
+      check_mode: false
+      register: nodejs_installed_check
+      changed_when: false
+      tags:
+        - nodejs
+
+    - name: Set a variable for the installed version of Node
+      set_fact:
+        nodejs_installed: "{{ nodejs_installed_check.stdout | replace('v', '') | trim | int }}"
+      tags:
+        - nodejs
+   
+    - name: Remove nodejs if the installed version is newer than the required version
+      apt:
+        pkg:
+          - nodejs
+        state: absent
+      when: nodejs_installed | int > nodejs_version | int 
+      tags:
+        - nodejs
+
+  when: ( nodejs_path_check is defined ) and ( "nodejs" in nodejs_path_check.stdout )
+
 - name: Nodejs package present
   apt:
     pkg:
