@@ -59,7 +59,7 @@
 
     - name: Set a variable for the installed version of Node
       set_fact:
-        nodejs_installed: "{{ nodejs_installed_check.stdout | replace('v', '') | | regex_replace('\\.(.*)$') | trim }}"
+        nodejs_installed: "{{ nodejs_installed_check.stdout | replace('v', '') | regex_replace('\\.(.*)$') | trim }}"
       tags:
         - nodejs
 
