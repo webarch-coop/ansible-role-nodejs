@@ -59,7 +59,14 @@
 
     - name: Set a variable for the installed version of Node
       set_fact:
-        nodejs_installed: "{{ nodejs_installed_check.stdout | replace('v', '') | trim | int }}"
+        nodejs_installed: "{{ nodejs_installed_check.stdout | replace('v', '') | trim }}"
+      tags:
+        - nodejs
+
+    - name: Print the installed and required versions
+      debug:
+        msg: "nodejs installed is {{ nodejs_installed }} and required is {{ nodejs_version }}"
+        verbosity: 1
       tags:
         - nodejs
    
