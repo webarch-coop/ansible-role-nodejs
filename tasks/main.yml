@@ -51,13 +51,13 @@
         verbosity: 1
       tags:
         - nodejs
-   
+
     - name: Remove nodejs if the installed version is newer than the required version
       apt:
         pkg:
           - nodejs
         state: absent
-      when: nodejs_installed | int > nodejs_version | int 
+      when: nodejs_installed | int > nodejs_version | int
       tags:
         - nodejs
 
