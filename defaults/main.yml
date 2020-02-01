@@ -1,7 +1,7 @@
 ---
 # Track the latest Active LTS
 # See https://nodejs.org/en/about/releases/
-nodejs_version: 11
+nodejs_version: 12
 # Enable the source repo
 nodejs_src: false
 ...
