@@ -1,7 +1,9 @@
 ---
-- name: Set nodejs_distro variable
-  set_fact:
-    nodejs_distro: "{{ ansible_distribution_release }}"
+- name: apt-transport-https present 
+  apt:
+    pkg:
+      - apt-transport-https
+    state: present
   tags:
     - nodejs
 
