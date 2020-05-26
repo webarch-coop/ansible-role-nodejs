@@ -1,5 +1,5 @@
 ---
-- name: apt-transport-https present 
+- name: apt-transport-https present
   apt:
     pkg:
       - apt-transport-https
