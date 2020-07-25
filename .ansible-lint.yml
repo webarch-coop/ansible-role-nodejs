@@ -11,5 +11,7 @@ skip_list:
   - "503"
   # Commands should not change things if nothing needs doing
   - "301"
+  # Package installs should not use latest
+  - "403"
 # vim: syntax=yaml
 ...
