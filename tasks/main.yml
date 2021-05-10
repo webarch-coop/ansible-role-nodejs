@@ -19,6 +19,7 @@
   template:
     src: templates/nodejs.list.j2
     dest: /etc/apt/sources.list.d/nodejs.list
+    mode: 0644
   tags:
     - nodejs
 
@@ -32,6 +33,7 @@
 - name: Check if nodejs is already installed
   command: which nodejs
   check_mode: false
+  changed_when: false
   register: nodejs_path_check
   failed_when: nodejs_path_check.rc is not regex('0|1')
   tags:
@@ -70,7 +72,7 @@
   apt:
     pkg:
       - nodejs
-    state: latest
+    state: present
     update_cache: true
   tags:
     - nodejs
