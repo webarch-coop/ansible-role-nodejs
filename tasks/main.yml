@@ -72,7 +72,7 @@
   apt:
     pkg:
       - nodejs
-    state: present
+    state: latest
     update_cache: true
   tags:
     - nodejs
