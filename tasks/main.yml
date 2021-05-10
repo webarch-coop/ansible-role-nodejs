@@ -72,6 +72,8 @@
       - nodejs
     state: latest
     update_cache: true
+  tags:
+    - nodejs
 
 - name: Install additional node.js packages
   npm:
@@ -81,4 +83,6 @@
   loop_control:
     loop_var: pkg
   when: ( nodejs_packages is defined ) and ( nodejs_packages != [] )
+  tags:
+    - nodejs
 ...
