@@ -78,7 +78,7 @@
 - name: Install additional node.js packages
   npm:
     name: sass
-    global: true 
+    global: true
   loop: "{{ nodejs_packages }}"
   loop_control:
     loop_var: pkg
