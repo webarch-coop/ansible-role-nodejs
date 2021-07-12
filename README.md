@@ -8,7 +8,8 @@ see the [apt sources.list template](templates/nodejs.list.j2).
 
 The role will currently install Node.js v14.x by default, see [the other
 available
-versions](https://github.com/nodesource/distributions/blob/master/README.md#installation-instructions).
+versions](https://github.com/nodesource/distributions/blob/master/README.md#installation-instructions)
+and the [Node.js releases page](https://nodejs.org/en/about/releases/).
 
 Additional packages, to be installed globally, can be added to [the default
 list](defaults/main.yml):
