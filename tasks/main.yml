@@ -3,18 +3,18 @@
   block:
 
     - name: Variables checked
-      asert:
+      assert:
         that:
           - nodejs_install is regex('^binary|nodesource')
 
     - name: Binary install variables checked
       asert:
         that:
-          - ( nodejs_version == "latest" ) or ( nodejs_version is regex ('^[0-9]{1,2}[.][0-9]{1,2}[.][0-9]{1,2}[.]$') ) 
+          - ( nodejs_version == "latest" ) or ( nodejs_version is regex ('^[0-9]{1,2}[.][0-9]{1,2}[.][0-9]{1,2}[.]$') )
       when: nodejs_install == "binary"
 
     - name: Nodesource install variables checked
-      asert:
+      assert:
         that:
           - nodejs_version | type_debug == "int"
           - nodejs_version is regex ('^[0-9]{2}$')
@@ -33,7 +33,7 @@
       ansible.bulitin.include_tasks: nodesource.yml
       when: nodejs_install == "nodesource"
 
-    - name: Include Node.js binary install tasks 
+    - name: Include Node.js binary install tasks
       ansible.bulitin.include_tasks: binary.yml
       when: nodejs_install == "binary"
 

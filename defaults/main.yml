@@ -1,7 +1,7 @@
 ---
 nodejs: true
 # nodejs_install can be either binary or nodesource
-nodejs_install: binary 
+nodejs_install: binary
 # nodejs_version needs to be a interger for the nodesource install and
 # either latest or a version number for the binary install
 # https://nodejs.org/en/about/releases/

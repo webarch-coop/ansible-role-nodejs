@@ -19,7 +19,7 @@
       loop_control:
         loop_var: path
         label: "{{ path | basename }}"
- 
+
     - name: Check if Node.js is already installed
       ansible.builtin.stat:
         path: /usr/bin/node
