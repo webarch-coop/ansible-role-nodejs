@@ -120,7 +120,7 @@
         chdir: "/usr/local/lib/nodejs/node-v{{ nodejs_version_required }}-linux-x64/bin"
 
     - name: Node.js symlinks present
-      ansible.buiiltin.file:
+      ansible.builtin.file:
         src: "{{ file.src }}"
         dest: "{{ file.dest }}"
         follow: false
