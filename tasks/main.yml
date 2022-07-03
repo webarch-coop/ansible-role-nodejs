@@ -55,7 +55,7 @@
 
     - name: Install additional node.js packages
       community.general.npm:
-        name: "{{ pkg }}" 
+        name: "{{ pkg }}"
         global: true
       loop: "{{ nodejs_packages }}"
       loop_control:

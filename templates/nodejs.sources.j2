@@ -1,0 +1,10 @@
+# {{ ansible_managed }}
+
+Types: deb 
+URIs: https://deb.nodesource.com/node_{{ nodejs_version }}.x
+Suites: {{ ansible_distribution_release }}
+Architectures: {{ ansible_facts.ansible_local.dpkg.arch }}
+Components: main
+Signed-By: /etc/apt/keyrings/nodejs.gpg
+
+# vim: ft=debsources
