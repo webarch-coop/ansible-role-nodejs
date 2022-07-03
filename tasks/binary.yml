@@ -88,11 +88,6 @@
         executable: "{{ ansible_local.bash.path }}"
         chdir: "{{ nodejs_download_path }}"
 
-    - name: Node.js lib directory absent
-      ansible.builtin.file:
-        path: /usr/local/lib/nodejs
-        state: absent
-
     - name: Node.js lib directory present
       ansible.builtin.file:
         path: /usr/local/lib/nodejs
