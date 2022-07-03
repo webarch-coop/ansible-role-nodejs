@@ -82,6 +82,8 @@
       ansible.builtin.shell: |
         set -e -o pipefail
         grep node-v{{ nodejs_version_required }}-linux-x64.tar.gz SHASUMS256.txt | sha256sum -c -
+      changed_when: false
+      check_mode: false
       args:
         executable: "{{ ansible_local.bash.path }}"
         chdir: "{{ nodejs_download_path }}"
@@ -129,6 +131,9 @@
           dest: "/usr/local/bin/npme"
         - src: "/usr/local/lib/nodejs/node-v{{ nodejs_version_required }}-linux-x64/bin/npx"
           dest: "/usr/local/bin/npx"
+      loop_control:
+        loop_var: file
+        label: "{{ dest | basename }}"
 
     - name: Install additional Node.js packages
       community.general.npm:
