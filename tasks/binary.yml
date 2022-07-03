@@ -38,6 +38,7 @@
     - name: Set a fact for the required version of Node.js
       ansible.builtin.set_fact:
         nodejs_version_required: "{% if nodejs_version == 'latest' %}{{ nodejs_version_latest }}{% else %}{{ nodejs_version }}{% endif %}"
+        nodejs_version_required_v: "{% if nodejs_version == 'latest' %}v{{ nodejs_version_latest }}{% else %}v{{ nodejs_version }}{% endif %}"
 
     - name: Node.js GPG keys present
       ansible.builtin.include_tasks: gpg_recv_key.yml
@@ -109,7 +110,7 @@
       check_mode: false
       changed_when: false
       register: nodejs_test
-      failed_when: ( "nodejs_version_required" not in "nodejs_test.stdout" )
+      failed_when: ( nodejs_test.stdout != nodejs_version_required_v )
 
     - name: Node.js symlinks present
       ansible.builtin.file:
