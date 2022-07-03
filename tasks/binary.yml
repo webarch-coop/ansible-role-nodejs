@@ -71,7 +71,7 @@
 
     - name: Download Node.js binary
       ansible.builtin.get_url:
-        url: "https://nodejs.org/dist/v{{ nodejs_version_required }}-linux-x64.tar.gz"
+        url: "https://nodejs.org/dist/v{{ nodejs_version_required }}/node-v{{ nodejs_version_required }}-linux-x64.tar.gz"
         dest: "{{ nodejs_download_path }}/v{{ nodejs_version_required }}-linux-x64.tar.gz"
         mode: 0644
         owner: root
