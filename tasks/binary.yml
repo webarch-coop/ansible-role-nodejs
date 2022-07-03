@@ -41,7 +41,7 @@
 
     - name: Node.js GPG keys present
       ansible.builtin.command: "gpg --keyserver hkps://keys.openpgp.org --recv-keys {{ fpr }}"
-      loop: "{{ nodejs_release keys }}"
+      loop: "{{ nodejs_release_keys }}"
       loop_control:
         loop_var: fpr
 
