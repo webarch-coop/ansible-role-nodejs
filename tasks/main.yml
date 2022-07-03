@@ -2,6 +2,11 @@
 - name: Install and upgrade Node
   block:
 
+    - name: Include APT tasks
+      ansible.builtin.include_tasks: apt.yml
+      tags:
+        - nodejs_apt
+
     - name: Remove Legacy node in /usr/local/bin
       ansible.builtin.file:
         path: /usr/local/bin/node
