@@ -133,7 +133,7 @@
           dest: "/usr/local/bin/npx"
       loop_control:
         loop_var: file
-        label: "{{ dest | basename }}"
+        label: "{{ file.dest | basename }}"
 
     - name: Install additional Node.js packages
       community.general.npm:
