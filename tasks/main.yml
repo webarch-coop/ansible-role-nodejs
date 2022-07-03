@@ -30,11 +30,11 @@
         - nodejs_apt_local_facts
 
     - name: Include Node.js nodesource install tasks
-      ansible.bulitin.include_tasks: nodesource.yml
+      ansible.builtin.include_tasks: nodesource.yml
       when: nodejs_install == "nodesource"
 
     - name: Include Node.js binary install tasks
-      ansible.bulitin.include_tasks: binary.yml
+      ansible.builtin.include_tasks: binary.yml
       when: nodejs_install == "binary"
 
   when: nodejs | bool
