@@ -80,7 +80,7 @@
     - name: Node.js SHA256SUMS GPG signature checked
       ansible.builtin.shell: >
         set -e -o pipefail
-        grep node-v{{ nodejs_version_required }}tar.gz SHASUMS256.txt | sha256sum -c -
+        grep node-v{{ nodejs_version_required }}-linux-x64.tar.gz SHASUMS256.txt | sha256sum -c -
       args:
         executable: "{{ ansible_local.bash.path }}"
         chdir: "{{ nodejs_download_path }}"
