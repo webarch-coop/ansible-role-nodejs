@@ -8,6 +8,8 @@
         ( ansible_local.dpkg.arch is not defined ) or
         ( ansible_local.gpg.version is not defined ) or
         ( ansible_local.bash.path is not defined )
+      tags:
+        - nodejs_apt_local_facts
 
     - name: Dependancies present
       ansible.builtin.apt:
