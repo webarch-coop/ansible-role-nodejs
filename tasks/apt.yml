@@ -1,11 +1,9 @@
 ---
-- name: Configure APT for Node
+- name: Configure APT for NodeJS
   block:
 
     - name: Include local fact tasks if variables are not defined
-      ansible.builtin.include_role:
-        name: apt
-        tasks_from: local_facts.yml
+      ansible.builtin.include_tasks: local_facts.yml
       when: >
         ( ansible_local.dpkg.arch is not defined ) or
         ( ansible_local.gpg.version is not defined ) or
@@ -17,13 +15,13 @@
           - apt-transport-https
         state: present
 
-    - name: Find legacy Node apt list files
+    - name: Find legacy NodeJS apt list files
       ansible.builtin.find:
         paths: /etc/apt/sources.list.d
         patterns: "*node*.list"
       register: nodejs_old_apt_list_files
 
-    - name: List legacy Node apt list files to be disabled
+    - name: List legacy NodeJS apt list files to be disabled
       ansible.builtin.debug:
         msg: "apt list file {{ file.path }} to be moved to {{ file.path }}.ansible.save"
       loop: "{{ nodejs_old_apt_list_files.files }}"
@@ -32,7 +30,7 @@
         label: "{{ file.path | basename }}"
       when: ( nodejs_old_apt_list_files.matched >= 1 )
 
-    - name: Disable legacy Node apt list files
+    - name: Disable legacy NodeJS apt list files
       ansible.builtin.command: "mv {{ file.path }} {{ file.path }}.ansible.save"
       loop: "{{ nodejs_old_apt_list_files.files }}"
       loop_control:
@@ -40,7 +38,7 @@
         label: "{{ file.path | basename }}"
       when: ( nodejs_old_apt_list_files.matched >= 1 )
 
-    - name: Legacy Nodesource GPG key absent
+    - name: Legacy NodeJS GPG key absent
       ansible.builtin.apt_key:
         id: 9FD3B784BC1C6FC31A8A0A1C1655A0AB68576280
         state: absent
@@ -53,44 +51,44 @@
         owner: root
         group: root
 
-    - name: Node ASCII armored GPG key present
+    - name: NodeJS ASCII armored GPG key present
       ansible.builtin.get_url:
         url: "{{ nodejs_gpg_url }}"
         checksum: "{{ nodejs_gpg_checksum }}"
-        dest: /root/node.asc
+        dest: /root/nodejs.asc
         force: true
         mode: 0644
         owner: root
         group: root
       register: nodejs_gpg_asc_file
 
-    - name: Stat Node gpg ascii armored file
+    - name: Stat NodeJS GPG ASCII armored file
       ansible.builtin.stat:
-        path: /root/node.asc
+        path: /root/nodejs.asc
       register: nodejs_asc_file
 
     - name: Check gpg key when it exists
       block:
 
-        - name: Stat Node gpg dearmored file
+        - name: Stat NodeJS GPG dearmored file
           ansible.builtin.stat:
-            path: /etc/apt/keyrings/node.gpg
+            path: /etc/apt/keyrings/nodejs.gpg
           register: nodejs_gpg_file
 
-        - name: Node gpg key dearmored
+        - name: NodeJS GPG key dearmored
           ansible.builtin.shell: |
             set -e -o pipefail
-            gpg --dearmor < /root/node.asc > /etc/apt/keyrings/node.gpg
+            gpg --dearmor < /root/nodejs.asc > /etc/apt/keyrings/nodejs.gpg
           args:
             executable: "{{ ansible_local.bash.path }}"
           when: ( nodejs_gpg_asc_file.changed | bool ) or ( not nodejs_gpg_file.stat.exists | bool )
 
-        - name: Stat Node gpg dearmored file
+        - name: Stat NodeJS GPG dearmored file
           ansible.builtin.stat:
-            path: /etc/apt/keyrings/node.gpg
+            path: /etc/apt/keyrings/nodejs.gpg
           register: nodejs_gpg_file
 
-        - name: Node gpg key check command
+        - name: NodeJS GPG key check command
           ansible.builtin.command: >
             gpg --with-colons
             {% if ansible_local.gpg.version is version('2.2.12', '<') %}
@@ -98,13 +96,13 @@
             {% else %}
             --show-keys
             {% endif %}
-            /etc/apt/keyrings/node.gpg
+            /etc/apt/keyrings/nodejs.gpg
           when: ( nodejs_gpg_file.stat.exists | bool )
           check_mode: false
           changed_when: false
           register: nodejs_gpg
 
-        - name: Node gpg key check only first fingerprint for gpg versions less that 2.2.12
+        - name: NodeJS GPG key check only first fingerprint for GPG versions less that 2.2.12
           ansible.builtin.assert:
             that:
               - fpr in nodejs_gpg.stdout
@@ -116,7 +114,7 @@
             extended: true
             loop_var: fpr
 
-        - name: Node gpg key check all fingerprints
+        - name: NodeJS GPG key check all fingerprints
           ansible.builtin.assert:
             that:
               - fpr in nodejs_gpg.stdout
@@ -127,25 +125,25 @@
 
       when: ( nodejs_asc_file.stat.exists | bool )
 
-    - name: Node repository sources file present
+    - name: NodeJS repository sources file present
       ansible.builtin.template:
-        src: node.sources.j2
+        src: nodejs.sources.j2
         dest: /etc/apt/sources.list.d/node.sources
         mode: 0644
         owner: root
         group: root
       register: nodejs_sources
 
-    - name: Node apt preferences present
+    - name: NodeJS apt preferences present
       ansible.builtin.template:
-        src: node.pref.j2
+        src: nodejs.pref.j2
         dest: /etc/apt/preferences.d/node.pref
         mode: 0644
         owner: root
         group: root
       register: nodejs_preferences
 
-    - name: Update apt cache
+    - name: Update APT cache
       ansible.builtin.apt:
         update_cache: true
       when: ( nodejs_sources.changed | bool ) or ( nodejs_preferences.changed | bool )
