@@ -49,7 +49,7 @@
         update_cache: true
 
     - name: Install additional node.js packages
-      community.general..npm:
+      community.general.npm:
         name: "{{ pkg }}" 
         global: true
       loop: "{{ nodejs_packages }}"
