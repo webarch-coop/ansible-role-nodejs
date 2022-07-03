@@ -25,7 +25,7 @@
 
         - name: Set a variable for the installed version of Node
           ansible.builtin.set_fact:
-            nodejs_installed: "{{ nodejs_installed_check.stdout | replace('v', '') | regex_replace('\\.(.*)$') | trim | int }}"
+            nodejs_installed: "{{ nodejs_installed_check.stdout | regex_replace('^v', '') | regex_replace('\\.(.*)$') | trim | int }}"
 
         - name: Print the installed and required versions
           ansible.builtin.debug:
@@ -37,7 +37,7 @@
             pkg:
               - nodejs
             state: absent
-          when: nodejs_installed > nodejs_version
+          when: ( nodejs_installed | int ) > ( nodejs_version | int )
 
       when: nodejs_path_check.rc == 0
 
