@@ -106,12 +106,8 @@
 
     - name: Test node version
       ansible.builtin.command: "/usr/local/lib/nodejs/node-v{{ nodejs_version_required }}-linux-x64/bin/node -v"
-
-    - name: Test npm version
-      ansible.builtin.command: "/usr/local/lib/nodejs/node-v{{ nodejs_version_required }}-linux-x64/bin/npm version"
-
-    - name: Test node version
-      ansible.builtin.command: "/usr/local/lib/nodejs/node-v{{ nodejs_version_required }}-linux-x64/bin/npx -v"
+      register: nodejs_test
+      failed_when: ( "nodejs_test.stdout" != "v{{ nodejs_version_required }}" )
 
     - name: Node.js symlinks present
       ansible.builtin.file:
