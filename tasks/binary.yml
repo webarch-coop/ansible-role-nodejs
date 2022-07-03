@@ -134,6 +134,7 @@
     - name: Install additional Node.js packages
       community.general.npm:
         name: "{{ pkg }}"
+        executable: /usr/local/bin/node
         global: true
       loop: "{{ nodejs_packages }}"
       loop_control:
