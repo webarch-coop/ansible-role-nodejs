@@ -1,0 +1,8 @@
+---
+- name: Node.js GPG keys present
+  ansible.builtin.command: "gpg --keyserver hkps://keys.openpgp.org --recv-keys {{ fpr }}"
+  register: nodejs_recv_key
+  changed_when: ( "not changed" not in nodejs_recv_key.stderr )
+  tags:
+    - nodejs
+...

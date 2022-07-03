@@ -40,7 +40,7 @@
         nodejs_version_required: "{% if nodejs_version == 'latest' %}{{ nodejs_version_latest }}{% else %}{{ nodejs_version }}{% endif %}"
 
     - name: Node.js GPG keys present
-      ansible.builtin.command: "gpg --keyserver hkps://keys.openpgp.org --recv-keys {{ fpr }}"
+      ansible.builtin.include_tasks: gpg_recv_key.yml
       loop: "{{ nodejs_release_keys }}"
       loop_control:
         loop_var: fpr
@@ -72,7 +72,7 @@
     - name: Download Node.js binary
       ansible.builtin.get_url:
         url: "https://nodejs.org/dist/v{{ nodejs_version_required }}/node-v{{ nodejs_version_required }}-linux-x64.tar.gz"
-        dest: "{{ nodejs_download_path }}/v{{ nodejs_version_required }}-linux-x64.tar.gz"
+        dest: "{{ nodejs_download_path }}/node-v{{ nodejs_version_required }}-linux-x64.tar.gz"
         mode: 0644
         owner: root
         group: root
