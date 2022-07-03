@@ -2,15 +2,6 @@
 - name: Configure APT for NodeJS
   block:
 
-    - name: Include local fact tasks if variables are not defined
-      ansible.builtin.include_tasks: local_facts.yml
-      when: >
-        ( ansible_local.dpkg.arch is not defined ) or
-        ( ansible_local.gpg.version is not defined ) or
-        ( ansible_local.bash.path is not defined )
-      tags:
-        - nodejs_apt_local_facts
-
     - name: Dependancies present
       ansible.builtin.apt:
         pkg:
@@ -55,8 +46,8 @@
 
     - name: NodeJS ASCII armored GPG key present
       ansible.builtin.get_url:
-        url: "{{ nodejs_gpg_url }}"
-        checksum: "{{ nodejs_gpg_checksum }}"
+        url: "{{ nodejs_nodesource_gpg_url }}"
+        checksum: "{{ nodejs_nodesource_gpg_checksum }}"
         dest: /root/nodejs.asc
         force: true
         mode: 0644
@@ -111,7 +102,7 @@
           when:
             - ( ansible_loop.first | bool )
             - ( ansible_local.gpg.version is version('2.2.12', '<') )
-          loop: "{{ nodejs_gpg_fingerprints }}"
+          loop: "{{ nodejs_nodesource_gpg_fingerprints }}"
           loop_control:
             extended: true
             loop_var: fpr
@@ -121,7 +112,7 @@
             that:
               - fpr in nodejs_gpg.stdout
           when: ( ansible_local.gpg.version is version('2.2.12', '>=') )
-          loop: "{{ nodejs_gpg_fingerprints }}"
+          loop: "{{ nodejs_nodesource_gpg_fingerprints }}"
           loop_control:
             loop_var: fpr
 

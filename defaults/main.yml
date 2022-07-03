@@ -1,10 +1,17 @@
 ---
-# Track the latest Active LTS
-# See https://nodejs.org/en/about/releases/
-nodejs_version: 16
-# Enable the source repo
+nodejs: true
+# nodejs_install can be either binary or nodesource
+nodejs_install: binary 
+# nodejs_version needs to be a interger for the nodesource install and
+# either latest or a version number for the binary install
+# https://nodejs.org/en/about/releases/
+# https://github.com/nodejs/node/releases
+nodejs_version: latest
+# Directory to download archives, checksums and signatures to
+nodejs_download_path: /root/nodejs
+# Enable the nodesource source repo
 nodejs_src: false
-# Install additional packages
+# Install additional packages for the binary install
 nodejs_packages:
   - sass
 ...

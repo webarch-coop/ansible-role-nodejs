@@ -1,0 +1,64 @@
+---
+- name: Install Node.js using nodesource apt package
+  block:
+
+    - name: Include APT tasks
+      ansible.builtin.include_tasks: apt.yml
+      tags:
+        - nodejs_apt
+
+    - name: Binary node and associated symlinks absent from /usr/local/bin
+      ansible.builtin.file:
+        path: "{{ path }}"
+        state: absent
+      loop:
+        - /usr/local/bin/corepack
+        - /usr/local/bin/node
+        - /usr/local/bin/npm
+        - /usr/local/bin/npx
+      loop_control:
+        loop_var: path
+        label: "{{ path | basename }}"
+ 
+    - name: Check if Node.js is already installed
+      ansible.builtin.stat:
+        path: /usr/bin/node
+      register: nodejs_path_check
+
+    - name: Check version of Node.js
+      block:
+
+        - name: Check the version of Node.js installed
+          ansible.builtin.command: /usr/bin/nodejs --version
+          check_mode: false
+          register: nodejs_installed_check
+          changed_when: false
+
+        - name: Set a variable for the installed version of Node.js
+          ansible.builtin.set_fact:
+            nodejs_installed: "{{ nodejs_installed_check.stdout | regex_replace('^v', '') | regex_replace('\\.(.*)$') | trim | int }}"
+
+        - name: Print the installed and required versions of Node.js
+          ansible.builtin.debug:
+            msg: "nodejs installed is {{ nodejs_installed }} and required is {{ nodejs_version }}"
+            verbosity: 1
+
+        - name: Remove Node.js if the installed version is newer than the required version
+          ansible.builtin.apt:
+            pkg:
+              - nodejs
+            state: absent
+          when: ( nodejs_installed | int ) > ( nodejs_version | int )
+
+      when: nodejs_path_check.stat.exists | bool
+
+    - name: Node.js package present
+      ansible.builtin.apt:
+        pkg:
+          - nodejs
+        state: latest
+        update_cache: true
+
+  tags:
+    - nodejs
+...
