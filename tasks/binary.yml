@@ -104,13 +104,38 @@
         dest: /usr/local/lib/nodejs
         remote_src: true
 
-    - fail:
-
     - name: Test node version
       ansible.builtin.command: node -v
       args:
-        chdir: /usr/local/lib/nodejs/bin
+        chdir: "/usr/local/lib/nodejs/node-v{{ nodejs_version_required }}-linux-x64/bin"
 
+    - name: Test npm version
+      ansible.builtin.command: npm version
+      args:
+        chdir: "/usr/local/lib/nodejs/node-v{{ nodejs_version_required }}-linux-x64/bin"
+
+    - name: Test node version
+      ansible.builtin.command: npx -v
+      args:
+        chdir: "/usr/local/lib/nodejs/node-v{{ nodejs_version_required }}-linux-x64/bin"
+
+    - name: Node.js symlinks present
+      ansible.buiiltin.file:
+        src: "{{ file.src }}"
+        dest: "{{ file.dest }}"
+        follow: false
+        mode: 0777
+        owner: root
+        group: root
+      loop:
+        - src: "/usr/local/lib/nodejs/node-v{{ nodejs_version_required }}-linux-x64/bin/node"
+          dest: "/usr/local/bin/node"
+        - src: "/usr/local/lib/nodejs/node-v{{ nodejs_version_required }}-linux-x64/bin/node"
+          dest: "/usr/local/bin/nodejs"
+        - src: "/usr/local/lib/nodejs/node-v{{ nodejs_version_required }}-linux-x64/bin/npm"
+          dest: "/usr/local/bin/npme"
+        - src: "/usr/local/lib/nodejs/node-v{{ nodejs_version_required }}-linux-x64/bin/npx"
+          dest: "/usr/local/bin/npx"
 
     - name: Install additional Node.js packages
       community.general.npm:
