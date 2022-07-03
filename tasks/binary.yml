@@ -48,6 +48,7 @@
     - name: Node.js download directory present
       ansible.builtin.file:
         path: "{{ nodejs_download_path }}"
+        state: directory
         mode: 0700
         owner: root
         group: root
