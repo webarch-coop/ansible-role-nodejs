@@ -8,7 +8,7 @@
           - nodejs_install is regex('^binary|nodesource')
 
     - name: Binary install variables checked
-      asert:
+      assert:
         that:
           - ( nodejs_version == "latest" ) or ( nodejs_version is regex ('^[0-9]{1,2}[.][0-9]{1,2}[.][0-9]{1,2}[.]$') )
       when: nodejs_install == "binary"
