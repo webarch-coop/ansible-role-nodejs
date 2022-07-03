@@ -64,6 +64,11 @@
         group: root
       register: node_gpg_asc_file
 
+    - name: Stat Node gpg ascii armored file
+      ansible.builtin.stat:
+        path: /root/node.asc
+      register: node_asc_file
+
     - name: Check gpg key when it exists
       block:
 
