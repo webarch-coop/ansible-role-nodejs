@@ -109,7 +109,7 @@
       check_mode: false
       changed_when: false
       register: nodejs_test
-      failed_when: ( "nodejs_test.stdout" != "v{{ nodejs_version_required }}" )
+      failed_when: ( "nodejs_version_required" not in "nodejs_test.stdout" )
 
     - name: Node.js symlinks present
       ansible.builtin.file:
