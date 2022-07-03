@@ -37,7 +37,7 @@
 
     - name: Set a fact for the required version of Node.js
       ansible.builtin.set_fact:
-        nodejs_version_required: "{% if nodejs_version == 'latest' %}{{ nodejs_version_latest }}{% else %}{% nodejs_version %}{% endif %}"
+        nodejs_version_required: "{% if nodejs_version == 'latest' %}{{ nodejs_version_latest }}{% else %}{{ nodejs_version }}{% endif %}"
 
     - name: Node.js GPG keys present
       ansible.builtin.command: "gpg --keyserver hkps://keys.openpgp.org --recv-keys {{ fpr }}"
