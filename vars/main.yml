@@ -1,0 +1,23 @@
+---
+# ASCII armored GPG public key URL linked from
+# https://github.com/nodesource/distributions#debmanual
+node_gpg_url: https://deb.nodesource.com/gpgkey/nodesource.gpg.key
+
+# Get the sha256 checksum using the following command
+# wget -q https://deb.nodesource.com/gpgkey/nodesource.gpg.key -O - | sha256sum - | awk '{ print $1 }' | sed 's/^/"sha256:/' | sed 's/$/"/'
+node_gpg_checksum: "sha256:773b328f7b1d6db58a8c6a7fc89e2ed58ac5e06c3ab148411cf8272be7b1c472"
+
+# Get the gpg fingerprints using the following command
+# wget -q https://deb.nodesource.com/gpgkey/nodesource.gpg.key -O - | gpg --dearmor | gpg --with-colons --show-keys - | grep ^fpr | sed 's/^fpr//' | sed 's/://g' | sed 's/^/  - /'
+node_gpg_fingerprints:
+  - 9FD3B784BC1C6FC31A8A0A1C1655A0AB68576280
+  - 302755F9E22EDC1ABB62E9B56C5CDECAAA01DA2C
+
+# Packages available will vary between distros, you can get the packages installed from this repo using
+# aptitude search "?origin (node) ?installed"
+#
+# Get the packages available using the following command
+# grep Package /var/lib/apt/lists/deb.nodesource.com*_Packages | awk '{print $2}' | sort -u | sed 's/^/  - /'
+node_pkg:
+  - nodejs
+...

@@ -1,0 +1,151 @@
+---
+- name: Configure APT for Node
+  block:
+
+    - name: Include local fact tasks if variables are not defined
+      ansible.builtin.include_role:
+        name: apt
+        tasks_from: local_facts.yml
+      when: >
+        ( ansible_local.dpkg.arch is not defined ) or
+        ( ansible_local.gpg.version is not defined ) or
+        ( ansible_local.bash.path is not defined )
+
+    - name: Dependancies present
+      ansible.builtin.apt:
+        pkg:
+          - apt-transport-https
+        state: present
+
+    - name: Find legacy Node apt list files
+      ansible.builtin.find:
+        paths: /etc/apt/sources.list.d
+        patterns: "*node*.list"
+      register: node_old_apt_list_files
+
+    - name: List legacy Node apt list files to be disabled
+      ansible.builtin.debug:
+        msg: "apt list file {{ file.path }} to be moved to {{ file.path }}.ansible.save"
+      loop: "{{ node_old_apt_list_files.files }}"
+      loop_control:
+        loop_var: file
+        label: "{{ file.path | basename }}"
+      when: ( node_old_apt_list_files.matched >= 1 )
+
+    - name: Disable legacy Node apt list files
+      ansible.builtin.command: "mv {{ file.path }} {{ file.path }}.ansible.save"
+      loop: "{{ node_old_apt_list_files.files }}"
+      loop_control:
+        loop_var: file
+        label: "{{ file.path | basename }}"
+      when: ( node_old_apt_list_files.matched >= 1 )
+
+    - name: Legacy Nodesource GPG key absent
+      ansible.builtin.apt_key:
+        id: 9FD3B784BC1C6FC31A8A0A1C1655A0AB68576280
+        state: absent
+
+    - name: Apt keyrings directory present
+      ansible.builtin.file:
+        path: /etc/apt/keyrings
+        state: directory
+        mode: 0755
+        owner: root
+        group: root
+
+    - name: Node ASCII armored GPG key present
+      ansible.builtin.get_url:
+        url: "{{ node_gpg_url }}"
+        checksum: "{{ node_gpg_checksum }}"
+        dest: /root/node.asc
+        force: true
+        mode: 0644
+        owner: root
+        group: root
+      register: node_gpg_asc_file
+
+    - name: Check gpg key when it exists
+      block:
+
+        - name: Stat Node gpg dearmored file
+          ansible.builtin.stat:
+            path: /etc/apt/keyrings/node.gpg
+          register: node_gpg_file
+
+        - name: Node gpg key dearmored
+          ansible.builtin.shell: |
+            set -e -o pipefail
+            gpg --dearmor < /root/node.asc > /etc/apt/keyrings/node.gpg
+          args:
+            executable: "{{ ansible_local.bash.path }}"
+          when: ( node_gpg_asc_file.changed | bool ) or ( not node_gpg_file.stat.exists | bool )
+
+        - name: Stat Node gpg dearmored file
+          ansible.builtin.stat:
+            path: /etc/apt/keyrings/node.gpg
+          register: node_gpg_file
+
+        - name: Node gpg key check command
+          ansible.builtin.command: >
+            gpg --with-colons
+            {% if ansible_local.gpg.version is version('2.2.12', '<') %}
+            --with-fingerprint --with-subkey-fingerprint
+            {% else %}
+            --show-keys
+            {% endif %}
+            /etc/apt/keyrings/node.gpg
+          when: ( node_gpg_file.stat.exists | bool )
+          check_mode: false
+          changed_when: false
+          register: node_gpg
+
+        - name: Node gpg key check only first fingerprint for gpg versions less that 2.2.12
+          ansible.builtin.assert:
+            that:
+              - fpr in node_gpg.stdout
+          when:
+            - ( ansible_loop.first | bool )
+            - ( ansible_local.gpg.version is version('2.2.12', '<') )
+          loop: "{{ node_gpg_fingerprints }}"
+          loop_control:
+            extended: true
+            loop_var: fpr
+
+        - name: Node gpg key check all fingerprints
+          ansible.builtin.assert:
+            that:
+              - fpr in node_gpg.stdout
+          when: ( ansible_local.gpg.version is version('2.2.12', '>=') )
+          loop: "{{ node_gpg_fingerprints }}"
+          loop_control:
+            loop_var: fpr
+
+      when: ( node_asc_file.stat.exists | bool )
+
+    - name: Node repository sources file present
+      ansible.builtin.template:
+        src: node.sources.j2
+        dest: /etc/apt/sources.list.d/node.sources
+        mode: 0644
+        owner: root
+        group: root
+      register: node_sources
+
+    - name: Node apt preferences present
+      ansible.builtin.template:
+        src: node.pref.j2
+        dest: /etc/apt/preferences.d/node.pref
+        mode: 0644
+        owner: root
+        group: root
+      register: node_preferences
+
+    - name: Update apt cache
+      ansible.builtin.apt:
+        update_cache: true
+      when: ( node_sources.changed | bool ) or ( node_preferences.changed | bool )
+
+  tags:
+    - nodejs
+    - nodejs_apt
+...
