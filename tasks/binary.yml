@@ -87,13 +87,12 @@
     - name: Node.js lib directory absent
       ansible.builtin.file:
         path: /usr/local/lib/nodejs
-        mode: 0755
-        owner: root
-        group: root
+        state: absent
 
     - name: Node.js lib directory present
       ansible.builtin.file:
         path: /usr/local/lib/nodejs
+        state: directory
         mode: 0755
         owner: root
         group: root
