@@ -105,19 +105,13 @@
         remote_src: true
 
     - name: Test node version
-      ansible.builtin.command: ./node -v
-      args:
-        chdir: "/usr/local/lib/nodejs/node-v{{ nodejs_version_required }}-linux-x64/bin"
+      ansible.builtin.command: "/usr/local/lib/nodejs/node-v{{ nodejs_version_required }}-linux-x64/bin/node -v"
 
     - name: Test npm version
-      ansible.builtin.command: ./npm version
-      args:
-        chdir: "/usr/local/lib/nodejs/node-v{{ nodejs_version_required }}-linux-x64/bin"
+      ansible.builtin.command: "/usr/local/lib/nodejs/node-v{{ nodejs_version_required }}-linux-x64/bin/npm version"
 
     - name: Test node version
-      ansible.builtin.command: ./npx -v
-      args:
-        chdir: "/usr/local/lib/nodejs/node-v{{ nodejs_version_required }}-linux-x64/bin"
+      ansible.builtin.command: "/usr/local/lib/nodejs/node-v{{ nodejs_version_required }}-linux-x64/bin/npx -v"
 
     - name: Node.js symlinks present
       ansible.builtin.file:
