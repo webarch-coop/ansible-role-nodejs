@@ -23,7 +23,7 @@ nodejs_nodesource_pkg:
 
 # Node.js release keys
 # https://github.com/nodejs/node#release-keys
-nodejs_release keys:
+nodejs_release_keys:
   - 4ED778F539E3634C779C87C6D7062848A1AB005C
   - 141F07595B7B3FFE74309A937405533BE57C7D57
   - 94AE36675C464D64BAFA68DD7434390BDBE9B9C5
