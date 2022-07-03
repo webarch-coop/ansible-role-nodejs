@@ -118,6 +118,7 @@
       ansible.builtin.file:
         src: "{{ file.src }}"
         dest: "{{ file.dest }}"
+        state: link
         follow: false
         mode: 0777
         owner: root
