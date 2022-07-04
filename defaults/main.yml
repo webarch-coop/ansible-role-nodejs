@@ -12,6 +12,5 @@ nodejs_download_path: /root/nodejs
 # Enable the nodesource source repo
 nodejs_src: false
 # Install additional packages for the binary install
-nodejs_packages:
-  - sass
+nodejs_packages: []
 ...
