@@ -1,4 +1,4 @@
-# Ansible Debian Node.js Role 
+# Webarchitects Ansible Debian Node.js Role 
 
 [![pipeline status](https://git.coop/webarch/nodejs/badges/master/pipeline.svg)](https://git.coop/webarch/nodejs/-/commits/master)
 
@@ -11,7 +11,7 @@ The [defaults/main.yml](defaults/main.yml) variables:
 | `nodejs`               | `true`           | Set to `false` for all the tasks in this role to be skipped.                                                                                           |
 | `nodejs_download_path` | `/root/nodejs`   | Path to use for downloading binary packages, GPG signatures and SHA256SUM files.                                                                       |
 | `nodejs_install`       | `binary`         | Set to `nodesource` for a [apt install](https://github.com/nodesource/distributions)                                                                   |
-| `nodejs_packages`      | `[]`             | Additiobal node packages to install                                                                                                                    |
+| `nodejs_packages`      | `[]`             | Additional node packages to install                                                                                                                    |
 | `nodejs_src`           | `false`          | Set to `true` to enable the NodeSource source package repo                                                                                             |
 | `nodejs_version`       | `16.15.1`        | For binary installs a [version number](https://github.com/nodejs/node/releases) or `latest`, for NodeSource `apt` installs a integer, for example `16` | 
 
