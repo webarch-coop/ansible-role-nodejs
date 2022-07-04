@@ -100,7 +100,7 @@
 
     - name: Node.js binary package unarchived
       ansible.builtin.unarchive:
-        src: "{{ nodejs_download_path }}/v{{ nodejs_version_required }}-linux-x64.tar.gz"
+        src: "{{ nodejs_download_path }}/node-v{{ nodejs_version_required }}-linux-x64.tar.gz"
         dest: /usr/local/lib/nodejs
         remote_src: true
 
