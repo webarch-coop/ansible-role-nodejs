@@ -124,7 +124,7 @@
         - src: "/usr/local/lib/nodejs/node-v{{ nodejs_version_required }}-linux-x64/bin/node"
           dest: "/usr/local/bin/nodejs"
         - src: "/usr/local/lib/nodejs/node-v{{ nodejs_version_required }}-linux-x64/bin/npm"
-          dest: "/usr/local/bin/npme"
+          dest: "/usr/local/bin/npm"
         - src: "/usr/local/lib/nodejs/node-v{{ nodejs_version_required }}-linux-x64/bin/npx"
           dest: "/usr/local/bin/npx"
       loop_control:
