@@ -58,6 +58,7 @@
       ansible.builtin.get_url:
         url: "https://nodejs.org/dist/v{{ nodejs_version_required }}/SHASUMS256.txt.sig"
         dest: "{{ nodejs_download_path }}/SHASUMS256.txt.sig"
+        force: true
         mode: 0644
         owner: root
         group: root
@@ -66,6 +67,7 @@
       ansible.builtin.get_url:
         url: "https://nodejs.org/dist/v{{ nodejs_version_required }}/SHASUMS256.txt"
         dest: "{{ nodejs_download_path }}/SHASUMS256.txt"
+        force: true
         mode: 0644
         owner: root
         group: root
