@@ -76,6 +76,7 @@
       ansible.builtin.get_url:
         url: "https://nodejs.org/dist/v{{ nodejs_version_required }}/node-v{{ nodejs_version_required }}-linux-x64.tar.gz"
         dest: "{{ nodejs_download_path }}/node-v{{ nodejs_version_required }}-linux-x64.tar.gz"
+        timeout: 30
         mode: 0644
         owner: root
         group: root
