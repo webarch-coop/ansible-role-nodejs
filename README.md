@@ -4,6 +4,8 @@
 
 This repository contains an Ansible role for installing [Node.js](https://nodejs.org/en/about/releases/) on Debian and Ubuntu using either [binary packages](https://github.com/nodejs/help/wiki/Installation#how-to-install-nodejs-via-binary-archive-on-linux) or [NodeSource apt packages](https://github.com/nodesource/distributions/blob/master/README.md#installation-instructions).
 
+See the [Node.js vulnerabilities blog](https://nodejs.org/en/blog/vulnerability/) and the [GitHub node releases](https://github.com/nodejs/node/releases) for keeping up to date with the latest versions.
+
 The [defaults/main.yml](defaults/main.yml) variables:
 
 | Variable name          | Default value    | Comment                                                                                                                                                |
