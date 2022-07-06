@@ -95,10 +95,14 @@
           changed_when: false
           register: nodejs_gpg
 
+        - name: Set a fact for the GPG fingerprints
+          ansible.builtin.set_fact:
+            nodejs_nodesource_gpg_fingerprints_found: "{{ nodejs_gpg.stdout | community.general.jc('gpg') | community.general.json_query('[?type == 'fpr'].user_id') | list }}"
+
         - name: NodeJS GPG key check only first fingerprint for GPG versions less that 2.2.12
           ansible.builtin.assert:
             that:
-              - fpr in nodejs_gpg.stdout
+              - fpr in nodejs_nodesource_gpg_fingerprints_found
           when:
             - ( ansible_loop.first | bool )
             - ( ansible_local.gpg.version is version('2.2.12', '<') )
@@ -110,7 +114,7 @@
         - name: NodeJS GPG key check all fingerprints
           ansible.builtin.assert:
             that:
-              - fpr in nodejs_gpg.stdout
+              - fpr in nodejs_nodesource_gpg_fingerprints_found
           when: ( ansible_local.gpg.version is version('2.2.12', '>=') )
           loop: "{{ nodejs_nodesource_gpg_fingerprints }}"
           loop_control:
