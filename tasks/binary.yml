@@ -122,6 +122,8 @@
         owner: root
         group: root
       loop:
+        - src: "/usr/local/lib/nodejs/node-v{{ nodejs_version_required }}-linux-x64/bin/corepack"
+          dest: "/usr/local/bin/corepack"
         - src: "/usr/local/lib/nodejs/node-v{{ nodejs_version_required }}-linux-x64/bin/node"
           dest: "/usr/local/bin/node"
         - src: "/usr/local/lib/nodejs/node-v{{ nodejs_version_required }}-linux-x64/bin/node"
