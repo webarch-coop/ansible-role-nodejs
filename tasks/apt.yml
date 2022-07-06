@@ -100,6 +100,11 @@
             # nodejs_nodesource_gpg_fingerprints_found: "{{ nodejs_gpg.stdout | community.general.jc('gpg') | community.general.json_query('[?type == \\'fpr\\'].user_id') | list }}"
             nodejs_nodesource_gpg_fingerprints_found: "{{ nodejs_gpg.stdout | community.general.jc('gpg') }}"
 
+        - name: Debug GPG fingerprints
+          ansible.builtin.debug:
+            var: nodejs_nodesource_gpg_fingerprints_found
+            verbosity: 2
+
         - name: NodeJS GPG key check only first fingerprint for GPG versions less that 2.2.12
           ansible.builtin.assert:
             that:
