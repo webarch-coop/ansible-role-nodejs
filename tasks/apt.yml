@@ -98,7 +98,6 @@
         - name: Set a fact for the GPG fingerprints
           ansible.builtin.set_fact:
             nodejs_nodesource_gpg_fingerprints_found: "{{ nodejs_gpg.stdout | community.general.jc('gpg') | community.general.json_query('[?type==`fpr`].user_id') | list }}"
-            # nodejs_nodesource_gpg_fingerprints_found: "{{ nodejs_gpg.stdout | community.general.jc('gpg') }}"
 
         - name: Debug GPG fingerprints
           ansible.builtin.debug:
@@ -117,14 +116,11 @@
             extended: true
             loop_var: fpr
 
-        - name: NodeJS GPG key check all fingerprints
+        - name: NodeJS GPG key check fingerprints
           ansible.builtin.assert:
             that:
-              - fpr in nodejs_nodesource_gpg_fingerprints_found
+              - nodejs_nodesource_gpg_fingerprints == nodejs_nodesource_gpg_fingerprints_found
           when: ( ansible_local.gpg.version is version('2.2.12', '>=') )
-          loop: "{{ nodejs_nodesource_gpg_fingerprints }}"
-          loop_control:
-            loop_var: fpr
 
       when: ( nodejs_asc_file.stat.exists | bool )
 
