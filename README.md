@@ -17,6 +17,12 @@ The [defaults/main.yml](defaults/main.yml) variables:
 | `nodejs_src`           | `false`          | Set to `true` to enable the NodeSource source package repo                                                                                             |
 | `nodejs_version`       | `16.15.1`        | For binary installs a [version number](https://github.com/nodejs/node/releases) or `latest`, for NodeSource `apt` installs a integer, for example `16` | 
 
+This role requires [jc](https://github.com/kellyjonbrazil/jc) version `1.20.2` or later to be installed on the Ansible controller using `pip` for the parsing of GPG command output, `jc` can be [installed using Ansible](https://git.coop/webarch/jc/), or simply run:
+
+```bash
+pip3 install jc
+```
+
 The primary URL of this repo is [`https://git.coop/webarch/nodejs`](https://git.coop/webarch/nodejs) however it is also [mirrored to GitHub](https://github.com/webarch-coop/ansible-role-nodejs) and [available via Ansible Galaxy](https://galaxy.ansible.com/chriscroome/nodejs).
 
 If you use this role please use a tagged release, see [the release notes](https://git.coop/webarch/nodejs/-/releases).
