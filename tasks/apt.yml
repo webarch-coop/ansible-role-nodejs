@@ -97,7 +97,7 @@
 
         - name: Set a fact for the GPG fingerprints
           ansible.builtin.set_fact:
-            nodejs_nodesource_gpg_fingerprints_found: "{{ nodejs_gpg.stdout | community.general.jc('gpg') | community.general.json_query('[?type==\\'fpr\\'].user_id') | list }}"
+            nodejs_nodesource_gpg_fingerprints_found: "{{ nodejs_gpg.stdout | community.general.jc('gpg') | community.general.json_query('[?type==`fpr`].user_id') | list }}"
             # nodejs_nodesource_gpg_fingerprints_found: "{{ nodejs_gpg.stdout | community.general.jc('gpg') }}"
 
         - name: Debug GPG fingerprints
