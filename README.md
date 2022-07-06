@@ -1,10 +1,12 @@
-# Webarchitects Ansible Debian Node.js Role 
+# Webarchitects Ansible Node.js role 
 
 [![pipeline status](https://git.coop/webarch/nodejs/badges/master/pipeline.svg)](https://git.coop/webarch/nodejs/-/commits/master)
 
-This repository contains an Ansible role for installing [Node.js](https://nodejs.org/en/about/releases/) on Debian and Ubuntu using either [binary packages](https://github.com/nodejs/help/wiki/Installation#how-to-install-nodejs-via-binary-archive-on-linux) or [NodeSource apt packages](https://github.com/nodesource/distributions/blob/master/README.md#installation-instructions).
+This repository contains an Ansible role for installing [Node.js](https://nodejs.org/en/about/releases/), on Debian and Ubuntu using either [binary packages](https://github.com/nodejs/help/wiki/Installation#how-to-install-nodejs-via-binary-archive-on-linux) or [NodeSource apt packages](https://github.com/nodesource/distributions/blob/master/README.md#installation-instructions).
 
 See the [Node.js vulnerabilities blog](https://nodejs.org/en/blog/vulnerability/) and the [GitHub node releases](https://github.com/nodejs/node/releases) for keeping up to date with the latest versions.
+
+The Nodesource `.deb` packages appear to [no longer provide `npm`](https://github.com/nodesource/distributions/issues/1284) so for version 2.0.0 of this role and onwards binary packages are installed as these provide `npm`, `npx` and `corepack` in addition to `node`.
 
 The [defaults/main.yml](defaults/main.yml) variables:
 
