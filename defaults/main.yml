@@ -6,7 +6,8 @@ nodejs_install: binary
 # either latest or a version number for the binary install
 # https://nodejs.org/en/about/releases/
 # https://github.com/nodejs/node/releases
-nodejs_version: latest
+# By default this repo aims to track the latest LTS version
+nodejs_version: 16.15.1
 # Directory to download archives, checksums and signatures to
 nodejs_download_path: /root/nodejs
 # Enable the nodesource source repo
