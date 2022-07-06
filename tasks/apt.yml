@@ -107,19 +107,14 @@
         - name: NodeJS GPG key check only first fingerprint for GPG versions less that 2.2.12
           ansible.builtin.assert:
             that:
-              - fpr in nodejs_nodesource_gpg_fingerprints_found
-          when:
-            - ( ansible_loop.first | bool )
-            - ( ansible_local.gpg.version is version('2.2.12', '<') )
-          loop: "{{ nodejs_nodesource_gpg_fingerprints }}"
-          loop_control:
-            extended: true
-            loop_var: fpr
+              -  nodejs_nodesource_gpg_fingerprints[0] == nodejs_nodesource_gpg_fingerprints_found[0]
+          when: ( ansible_local.gpg.version is version('2.2.12', '<') )
 
-        - name: NodeJS GPG key check fingerprints
+        - name: NodeJS GPG key check all fingerprints
           ansible.builtin.assert:
             that:
-              - nodejs_nodesource_gpg_fingerprints == nodejs_nodesource_gpg_fingerprints_found
+              - nodejs_nodesource_gpg_fingerprints_found | difference(nodejs_nodesource_gpg_fingerprints) | length == 0
+              - nodejs_nodesource_gpg_fingerprints | difference(nodejs_nodesource_gpg_fingerprints_found) | length == 0
           when: ( ansible_local.gpg.version is version('2.2.12', '>=') )
 
       when: ( nodejs_asc_file.stat.exists | bool )

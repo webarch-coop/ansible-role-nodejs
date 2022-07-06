@@ -30,7 +30,7 @@
       block:
 
         - name: Check the version of Node.js installed
-          ansible.builtin.command: /usr/bin/nodejs --version
+          ansible.builtin.command: /usr/bin/node --version
           check_mode: false
           register: nodejs_installed_check
           changed_when: false
