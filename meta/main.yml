@@ -19,9 +19,12 @@ galaxy_info:
         - bionic
         - xenial
   galaxy_tags:
+    - corepack
     - debian
     - node
     - nodejs
+    - npm
+    - npx
     - ubuntu
 dependencies: []
 # List your role dependencies here, one per line. Be sure to remove the '[]' above,

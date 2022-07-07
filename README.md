@@ -17,9 +17,9 @@ The [defaults/main.yml](defaults/main.yml) variables:
 | `nodejs_install`       | `binary`         | Set to `nodesource` for a [apt install](https://github.com/nodesource/distributions)                                                                                                                                                                                                    |
 | `nodejs_packages`      | `[]`             | Additional node packages to install                                                                                                                                                                                                                                                     |
 | `nodejs_src`           | `false`          | Set to `true` to enable the NodeSource source package repo                                                                                                                                                                                                                              |
-| `nodejs_version`       | `latest-v16.x`   | For binary installs a [version number](https://github.com/nodejs/node/releases) like `16.15.1` or a symlink from [the archive](https://nodejs.org/dist/) like `latest-v16.x` or `latest` for the versy latest release, for NodeSource `apt` based installs an integer, for example `16` | 
+| `nodejs_version`       | `latest-v16.x`   | For binary installs a [version number](https://github.com/nodejs/node/releases) like `16.15.1` or a symlink from [the archive](https://nodejs.org/dist/) like `latest-v16.x` or `latest` for the very latest release, for NodeSource `apt` based installs an integer, for example `16` | 
 
-This role requires [jc](https://github.com/kellyjonbrazil/jc) version `1.20.2` or later to be installed on the Ansible controller using `pip` for the parsing of GPG command output, `jc` can be [installed using Ansible](https://git.coop/webarch/jc/), or simply run:
+This role requires [JC](https://github.com/kellyjonbrazil/jc) version `1.20.2` or later to be installed on the Ansible controller using `pip` for the parsing of GPG command output, it can be [installed using Ansible](https://git.coop/webarch/jc/), or simply run:
 
 ```bash
 pip3 install jc
@@ -29,4 +29,4 @@ The primary URL of this repo is [`https://git.coop/webarch/nodejs`](https://git.
 
 If you use this role please use a tagged release, see [the release notes](https://git.coop/webarch/nodejs/-/releases).
 
-This role can also be used with the [localhost repo](https://git.coop/webarch/localhost) to install `nodejs` locally.
+This role can also be used with the [localhost repo](https://git.coop/webarch/localhost) to install `node` locally.
