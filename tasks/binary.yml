@@ -47,7 +47,7 @@
         - name: Download the SHASUMS256.txt for the required Node.js version
           ansible.builtin.get_url:
             url: "https://nodejs.org/dist/{{ nodejs_version }}/SHASUMS256.txt"
-            dest: "{{ nodejs_download_path }}/SHASUMS256.txt" 
+            dest: "{{ nodejs_download_path }}/SHASUMS256.txt"
             force: true
             mode: 0644
             owner: root
