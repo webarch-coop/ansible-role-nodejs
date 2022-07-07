@@ -61,7 +61,7 @@
         - name: Set a fact for the latest version for Node.js release x
           ansible.builtin.set_fact:
             nodejs_version_x: "{{ line.split(' ') | trim }}"
-          when: ( nodejs_arch in line ) and ( line is regex('[.]tar[.]gz$')
+          when: ( nodejs_arch in line ) and ( line is regex('[.]tar[.]gz$') )
           loop: "{{ ( nodejs_sha256_b64encoded['content'] | b64decode | trim ).split('\n') }}"
           loop_control:
             loop_var: line
