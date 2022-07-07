@@ -1,4 +1,8 @@
 ---
+# Paths for local_facts scripts
+apt_dpkg: /usr/bin/dpkg
+apt_gpg: /usr/bin/gpg
+
 # ASCII armored GPG public key URL linked from
 # https://github.com/nodesource/distributions#debmanual
 nodejs_nodesource_gpg_url: https://deb.nodesource.com/gpgkey/nodesource.gpg.key

@@ -8,6 +8,12 @@
           - nodejs
         state: absent
 
+    # NOTE This will need updating for this role to support an architecture other that amd64
+    - name: Set a fact for the CPU architecture
+        ansible.builtin.set_fact:
+          nodejs_arch: linux-x64
+      when: ansible_local.dpkg.arch == "amd64"
+
     - name: Check the latest version of Node.js
       block:
 
@@ -53,8 +59,9 @@
           register: nodejs_sha356_b64encoded
 
         - name: Set a fact for the latest version for Node.js release x
-          ansible.builtin.setfact:
+          ansible.builtin.set_fact:
             nodejs_version_x: "{{ line.split(' ') | trim }}"
+          when: ( nodejs_arch in line ) and ( line is regex('[.]tar[.]gz$')
           loop: "{{ ( file_b64encoded['content'] | b64decode | trim ).split('\n') }}"
           loop_control:
             loop_var: line
@@ -101,8 +108,8 @@
 
     - name: Download Node.js binary
       ansible.builtin.get_url:
-        url: "https://nodejs.org/dist/v{{ nodejs_version_required }}/node-v{{ nodejs_version_required }}-linux-x64.tar.gz"
-        dest: "{{ nodejs_download_path }}/node-v{{ nodejs_version_required }}-linux-x64.tar.gz"
+        url: "https://nodejs.org/dist/v{{ nodejs_version_required }}/node-v{{ nodejs_version_required }}-{{ nodejs_arch }}.tar.gz"
+        dest: "{{ nodejs_download_path }}/node-v{{ nodejs_version_required }}-{{ nodejs_arch }}.tar.gz"
         timeout: 30
         mode: 0644
         owner: root
@@ -111,7 +118,7 @@
     - name: Node.js SHA256SUMS GPG signature checked
       ansible.builtin.shell: |
         set -e -o pipefail
-        grep node-v{{ nodejs_version_required }}-linux-x64.tar.gz SHASUMS256.txt | sha256sum -c -
+        grep node-v{{ nodejs_version_required }}-{{ nodejs_arch }}.tar.gz SHASUMS256.txt | sha256sum -c -
       changed_when: false
       check_mode: false
       args:
@@ -128,12 +135,12 @@
 
     - name: Node.js binary package unarchived
       ansible.builtin.unarchive:
-        src: "{{ nodejs_download_path }}/node-v{{ nodejs_version_required }}-linux-x64.tar.gz"
+        src: "{{ nodejs_download_path }}/node-v{{ nodejs_version_required }}-{{ nodejs_arch }}.tar.gz"
         dest: /usr/local/lib/nodejs
         remote_src: true
 
     - name: Test node version
-      ansible.builtin.command: "/usr/local/lib/nodejs/node-v{{ nodejs_version_required }}-linux-x64/bin/node -v"
+      ansible.builtin.command: "/usr/local/lib/nodejs/node-v{{ nodejs_version_required }}-{{ nodejs_arch }}/bin/node -v"
       check_mode: false
       changed_when: false
       register: nodejs_test
@@ -149,15 +156,15 @@
         owner: root
         group: root
       loop:
-        - src: "/usr/local/lib/nodejs/node-v{{ nodejs_version_required }}-linux-x64/bin/corepack"
+        - src: "/usr/local/lib/nodejs/node-v{{ nodejs_version_required }}-{{ nodejs_arch }}/bin/corepack"
           dest: "/usr/local/bin/corepack"
-        - src: "/usr/local/lib/nodejs/node-v{{ nodejs_version_required }}-linux-x64/bin/node"
+        - src: "/usr/local/lib/nodejs/node-v{{ nodejs_version_required }}-{{ nodejs_arch }}/bin/node"
           dest: "/usr/local/bin/node"
-        - src: "/usr/local/lib/nodejs/node-v{{ nodejs_version_required }}-linux-x64/bin/node"
+        - src: "/usr/local/lib/nodejs/node-v{{ nodejs_version_required }}-{{ nodejs_arch }}/bin/node"
           dest: "/usr/local/bin/nodejs"
-        - src: "/usr/local/lib/nodejs/node-v{{ nodejs_version_required }}-linux-x64/bin/npm"
+        - src: "/usr/local/lib/nodejs/node-v{{ nodejs_version_required }}-{{ nodejs_arch }}/bin/npm"
           dest: "/usr/local/bin/npm"
-        - src: "/usr/local/lib/nodejs/node-v{{ nodejs_version_required }}-linux-x64/bin/npx"
+        - src: "/usr/local/lib/nodejs/node-v{{ nodejs_version_required }}-{{ nodejs_arch }}/bin/npx"
           dest: "/usr/local/bin/npx"
       loop_control:
         loop_var: file
