@@ -6,7 +6,7 @@ This repository contains an Ansible role for installing [Node.js](https://nodejs
 
 See the [Node.js vulnerabilities blog](https://nodejs.org/en/blog/vulnerability/) and the [GitHub node releases](https://github.com/nodejs/node/releases) for keeping up to date with the latest versions.
 
-The Nodesource `.deb` packages appear to [no longer provide `npm`](https://github.com/nodesource/distributions/issues/1284) so for version 2.0.0 of this role and onwards binary packages are installed as these provide `npm`, `npx` and `corepack` in addition to `node`.
+The Nodesource `.deb` packages appear to [no longer provide `npm`](https://github.com/nodesource/distributions/issues/1284) so for version 2.0.0 of this role and onwards binary packages are installed by default as these provide `npm`, `npx` and `corepack` in addition to `node`, however Nodesource apt installs are also still supported.
 
 The [defaults/main.yml](defaults/main.yml) variables:
 
