@@ -11,7 +11,7 @@
       assert:
         that: >
           ( nodejs_version == "latest" ) or
-          ( nodejs_version is regex ('^latest-v[0-9]{1,2}[.]x$') )
+          ( nodejs_version is regex ('^latest-v[0-9]{1,2}[.]x$') ) or
           ( nodejs_version is regex ('^[0-9]{1,2}[.][0-9]{1,2}[.][0-9]{1,2}$') )
       when: nodejs_install == "binary"
 
