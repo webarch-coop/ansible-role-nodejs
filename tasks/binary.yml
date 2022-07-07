@@ -35,10 +35,37 @@
 
       when: nodejs_version == "latest"
 
+    - name: Check the latest version of a Node.js release
+      block:
+
+        - name: Download the SHASUMS256.txt for the required Node.js version
+          ansible.builtin.get_url:
+            url: "https://nodejs.org/dist/{{ nodejs_version }}/SHASUMS256.txt"
+            dest: "{{ nodejs_download_path }}/SHASUMS256.txt" 
+            force: true
+            mode: 0644
+            owner: root
+            group: root
+
+         - name: Slurp the SHASUMS256.txt for the required Node.js version
+           ansible.builtin.slurp:
+             src: "{{ nodejs_download_path }}/SHASUMS256.txt"
+           register: nodejs_sha356_b64encoded
+
+         - name: Set a fact for the latest version for Node.js release x
+           ansible.builtin.setfact:
+             nodejs_version_x: "{{ line.split(' ') | trim }}"
+           loop: "{{ ( file_b64encoded['content'] | b64decode | trim ).split('\n') }}"
+           loop_control:
+             loop_var: line
+             label: "{{ line.split(' ') | trim }}"
+
+      when: nodejs_version is regex ('^latest-v[0-9]{1,2}[.]x$')
+
     - name: Set a fact for the required version of Node.js
       ansible.builtin.set_fact:
-        nodejs_version_required: "{% if nodejs_version == 'latest' %}{{ nodejs_version_latest }}{% else %}{{ nodejs_version }}{% endif %}"
-        nodejs_version_required_v: "{% if nodejs_version == 'latest' %}v{{ nodejs_version_latest }}{% else %}v{{ nodejs_version }}{% endif %}"
+        nodejs_version_required: "{% if nodejs_version == 'latest' %}{{ nodejs_version_latest }}{% elif nodejs_version is regex ('^latest-v[0-9]{1,2}[.]x$') %}v{{ nodejs_version_x }}{% else %}{{ nodejs_version }}{% endif %}"
+        nodejs_version_required_v: "{% if nodejs_version == 'latest' %}v{{ nodejs_version_latest }}{% elif nodejs_version is regex ('^latest-v[0-9]{1,2}[.]x$') %}v{{ nodejs_version_x }}{% else %}v{{ nodejs_version }}{% endif %}"
 
     - name: Node.js GPG keys present
       ansible.builtin.include_tasks: gpg_recv_key.yml
