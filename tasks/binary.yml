@@ -67,6 +67,11 @@
             loop_var: line
             label: "{{ line.split(' ') | trim }}"
 
+        - name: Debug Node.js release x
+          ansible.builtin.debug:
+            var: nodejs_version_x
+            verbosity: 2
+
       when: nodejs_version is regex ('^latest-v[0-9]{1,2}[.]x$')
 
     - name: Set a fact for the required version of Node.js
