@@ -10,8 +10,8 @@
 
     # NOTE This will need updating for this role to support an architecture other that amd64
     - name: Set a fact for the CPU architecture
-        ansible.builtin.set_fact:
-          nodejs_arch: linux-x64
+      ansible.builtin.set_fact:
+        nodejs_arch: linux-x64
       when: ansible_local.dpkg.arch == "amd64"
 
     - name: Check the latest version of Node.js
