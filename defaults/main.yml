@@ -1,16 +1,16 @@
 ---
 nodejs: true
-# nodejs_install can be either binary or nodesource
-nodejs_install: binary
-# nodejs_version needs to be a interger for the nodesource install and
+# nodejs_version needs to be a integer for the nodesource install and
 # either latest or a version number for the binary install
 # https://nodejs.org/en/about/releases/
 # https://github.com/nodejs/node/releases
 # By default this repo aims to track the latest LTS version
 nodejs_version: 16.15.1
+# nodejs_install can be either binary or nodesource
+nodejs_install: binary
 # Directory to download archives, checksums and signatures to
 nodejs_download_path: /root/nodejs
-# Enable the nodesource source repo
+# Enable the nodesource apt source repo
 nodejs_src: false
 # Install additional packages for the binary install
 nodejs_packages: []

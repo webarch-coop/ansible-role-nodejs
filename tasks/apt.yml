@@ -107,7 +107,7 @@
         - name: NodeJS GPG key check only first fingerprint for GPG versions less that 2.2.12
           ansible.builtin.assert:
             that:
-              -  nodejs_nodesource_gpg_fingerprints[0] == nodejs_nodesource_gpg_fingerprints_found[0]
+              - nodejs_nodesource_gpg_fingerprints[0] == nodejs_nodesource_gpg_fingerprints_found[0]
           when: ( ansible_local.gpg.version is version('2.2.12', '<') )
 
         - name: NodeJS GPG key check all fingerprints
