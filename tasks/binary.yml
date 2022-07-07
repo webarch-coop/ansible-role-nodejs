@@ -47,18 +47,18 @@
             owner: root
             group: root
 
-         - name: Slurp the SHASUMS256.txt for the required Node.js version
-           ansible.builtin.slurp:
-             src: "{{ nodejs_download_path }}/SHASUMS256.txt"
-           register: nodejs_sha356_b64encoded
+        - name: Slurp the SHASUMS256.txt for the required Node.js version
+          ansible.builtin.slurp:
+            src: "{{ nodejs_download_path }}/SHASUMS256.txt"
+          register: nodejs_sha356_b64encoded
 
-         - name: Set a fact for the latest version for Node.js release x
-           ansible.builtin.setfact:
-             nodejs_version_x: "{{ line.split(' ') | trim }}"
-           loop: "{{ ( file_b64encoded['content'] | b64decode | trim ).split('\n') }}"
-           loop_control:
-             loop_var: line
-             label: "{{ line.split(' ') | trim }}"
+        - name: Set a fact for the latest version for Node.js release x
+          ansible.builtin.setfact:
+            nodejs_version_x: "{{ line.split(' ') | trim }}"
+          loop: "{{ ( file_b64encoded['content'] | b64decode | trim ).split('\n') }}"
+          loop_control:
+            loop_var: line
+            label: "{{ line.split(' ') | trim }}"
 
       when: nodejs_version is regex ('^latest-v[0-9]{1,2}[.]x$')
 
