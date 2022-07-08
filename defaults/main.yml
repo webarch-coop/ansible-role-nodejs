@@ -1,7 +1,7 @@
 ---
 nodejs: true
-nodejs_version: latest-v16.x
-nodejs_install: binary
+nodejs_version: 16
+nodejs_install: nodesource
 nodejs_download_path: /root/nodejs
 nodejs_src: false
 nodejs_packages: []
