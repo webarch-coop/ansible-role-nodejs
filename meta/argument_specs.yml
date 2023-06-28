@@ -1,0 +1,43 @@
+# Copyright 2020-2023 Chris Croome
+#
+# This file is part of the Webarchitects Node.js Ansible role.
+#
+# The Webarchitects Node.js Ansible role is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+#
+# The Webarchitects Node.js Ansible role is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with the Webarchitects Node.js Ansible role. If not, see <https://www.gnu.org/licenses/>.
+---
+argument_specs:
+  main:
+    short_description: The main entry point for the nodejs role.
+    options:
+      nodejs:
+        type: bool
+        required: true
+        description: Run the tasks in this role.
+      nodejs_download_path:
+        type: str
+        required: true
+        description: Download path for Node.js.
+      nodejs_install:
+        type: str
+        required: true
+        description: Node.js install method.
+        choices:
+          - binary
+          - nodesource
+      nodejs_packages:
+        type: list
+        elements: str
+        required: false
+        description: A list of additional packages to install.
+      nodejs_src:
+        type: bool
+        required: true
+        description: Install the Node.js source code.
+      nodejs_version:
+        type: int
+        required: true
+        description: The major version number for Node.js.
+...
