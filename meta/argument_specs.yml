@@ -37,7 +37,7 @@ argument_specs:
         required: true
         description: Install the Node.js source code.
       nodejs_version:
-        type: int
+        type: str
         required: true
-        description: The major version number for Node.js.
+        description: The Node.js major version number or latest.
 ...

@@ -39,6 +39,7 @@
         loop_var: file
         label: "{{ file.path | basename }}"
       when: ( nodejs_old_apt_list_files.matched >= 1 )
+      changed_when: true
 
     - name: Legacy NodeJS GPG key absent
       ansible.builtin.apt_key:
@@ -78,12 +79,16 @@
           register: nodejs_gpg_file
 
         - name: NodeJS GPG key dearmored
-          ansible.builtin.shell: |
+          ansible.builtin.shell: |-
             set -e -o pipefail
             gpg --dearmor < /root/nodejs.asc > /etc/apt/keyrings/nodejs.gpg
+            chmod 644 /etc/apt/keyrings/nodejs.gpg
           args:
             executable: "{{ ansible_local.bash.path }}"
-          when: ( nodejs_gpg_asc_file.changed | bool ) or ( not nodejs_gpg_file.stat.exists | bool )
+          changed_when: false
+          when:
+            ( nodejs_gpg_asc_file.changed | bool ) or
+            ( not nodejs_gpg_file.stat.exists | bool )
 
         - name: Stat NodeJS GPG dearmored file
           ansible.builtin.stat:
@@ -99,14 +104,14 @@
             --show-keys
             {% endif %}
             /etc/apt/keyrings/nodejs.gpg
-          when: ( nodejs_gpg_file.stat.exists | bool )
+          when: nodejs_gpg_file.stat.exists | bool
           check_mode: false
           changed_when: false
           register: nodejs_gpg
 
         - name: Set a fact for the GPG fingerprints
           ansible.builtin.set_fact:
-            nodejs_nodesource_gpg_fingerprints_found: "{{ nodejs_gpg.stdout | community.general.jc('gpg') | community.general.json_query('[?type==`fpr`].user_id') | list }}"
+            nodejs_nodesource_gpg_fingerprints_found: "{{ nodejs_gpg.stdout | string | community.general.jc('gpg') | community.general.json_query('[?type==`fpr`].user_id') | list }}"
 
         - name: Debug GPG fingerprints
           ansible.builtin.debug:

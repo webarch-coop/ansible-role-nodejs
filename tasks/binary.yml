@@ -8,7 +8,7 @@
 #
 # You should have received a copy of the GNU General Public License along with the Webarchitects Node.js Ansible role. If not, see <https://www.gnu.org/licenses/>.
 ---
-- name: Install Node.js binary package https://github.com/nodejs/help/wiki/Installation
+- name: Install Node.js binary package following https://github.com/nodejs/help/wiki/Installation
   block:
 
     - name: Remove Node.js APT package
@@ -70,7 +70,9 @@
         - name: Set a fact for the file name of the latest version for Node.js release x
           ansible.builtin.set_fact:
             nodejs_version_x_file: "{{ line | regex_replace('[0-9a-z]{64}') | trim }}"
-          when: ( nodejs_arch in line ) and ( line is regex('[.]tar[.]gz$') )
+          when:
+            - nodejs_arch in line
+            - line is regex('[.]tar[.]gz$')
           loop: "{{ ( nodejs_sha256_b64encoded['content'] | b64decode | trim ).split('\n') }}"
           loop_control:
             loop_var: line
@@ -83,7 +85,7 @@
 
         - name: Set a fact for the version number for Node.js release x
           ansible.builtin.set_fact:
-            nodejs_version_x: "{{ nodejs_version_x_file | regex_replace('^node-v') | regex_replace(nodejs_arch) |  regex_replace('-[.]tar[.]gz$') }}"
+            nodejs_version_x: "{{ nodejs_version_x_file | regex_replace('^node-v') | regex_replace(nodejs_arch) | regex_replace('-[.]tar[.]gz$') }}"
 
         - name: Debug Node.js release x
           ansible.builtin.debug:
@@ -94,14 +96,14 @@
 
     - name: Set a fact for the required version of Node.js
       ansible.builtin.set_fact:
-        nodejs_version_required: "{% if nodejs_version == 'latest' %}{{ nodejs_version_latest }}{% elif nodejs_version is regex ('^latest-v[0-9]{1,2}[.]x$') %}{{ nodejs_version_x }}{% else %}{{ nodejs_version }}{% endif %}"
-        nodejs_version_required_v: "{% if nodejs_version == 'latest' %}v{{ nodejs_version_latest }}{% elif nodejs_version is regex ('^latest-v[0-9]{1,2}[.]x$') %}v{{ nodejs_version_x }}{% else %}v{{ nodejs_version }}{% endif %}"
+        nodejs_version_required: "{% if nodejs_version == 'latest' %}{{ nodejs_version_latest }}{% elif nodejs_version is regex('^latest-v[0-9]{1,2}[.]x$') %}{{ nodejs_version_x }}{% else %}{{ nodejs_version }}{% endif %}"
+        nodejs_version_required_v: "{% if nodejs_version == 'latest' %}v{{ nodejs_version_latest }}{% elif nodejs_version is regex('^latest-v[0-9]{1,2}[.]x$') %}v{{ nodejs_version_x }}{% else %}v{{ nodejs_version }}{% endif %}"
 
     - name: Node.js GPG keys present
       ansible.builtin.include_tasks: gpg_recv_key.yml
       loop: "{{ nodejs_release_keys }}"
       loop_control:
-        loop_var: fpr
+        loop_var: nodejs_fpr
 
     - name: Node.js download directory present
       ansible.builtin.file:
@@ -201,7 +203,9 @@
       loop: "{{ nodejs_packages }}"
       loop_control:
         loop_var: pkg
-      when: ( nodejs_packages is defined ) and ( nodejs_packages != [] )
+      when:
+        - nodejs_packages is defined
+        - nodejs_packages != []
 
   tags:
     - nodejs

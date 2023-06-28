@@ -62,7 +62,7 @@
 
       when: nodejs_path_check.stat.exists | bool
 
-    - name: Node.js package present
+    - name: Node.js package present  # noqa package-latest
       ansible.builtin.apt:
         pkg:
           - nodejs

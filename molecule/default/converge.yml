@@ -8,12 +8,21 @@
 #
 # You should have received a copy of the GNU General Public License along with the Webarchitects Node.js Ansible role. If not, see <https://www.gnu.org/licenses/>.
 ---
-- name: Node.js GPG keys present
-  ansible.builtin.command: "gpg --keyserver hkps://keys.openpgp.org --recv-keys {{ nodejs_fpr }}"
-  register: nodejs_recv_key
-  changed_when:
-    - ( "not changed" not in nodejs_recv_key.stderr )
-    - ( "skipped" not in nodejs_recv_key.stderr )
-  tags:
-    - nodejs
+- name: Run as root
+  become: true
+  connection: local
+  gather_facts: true
+  hosts:
+    - localhost
+  tasks:
+
+    - name: Debug ansible_effective_user_id
+      ansible.builtin.debug:
+        var: ansible_effective_user_id
+
+    - name: Include nodejs role as root
+      ansible.builtin.include_role:
+        name: nodejs
+      vars:  # noqa var-naming[no-role-prefix]
+        nodejs: true
 ...
