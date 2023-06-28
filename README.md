@@ -4,7 +4,7 @@
 
 This repository contains an Ansible role for installing [Node.js](https://nodejs.org/en/about/releases/), on Debian and Ubuntu using either [binary packages](https://github.com/nodejs/help/wiki/Installation#how-to-install-nodejs-via-binary-archive-on-linux) or [NodeSource apt packages](https://github.com/nodesource/distributions/blob/master/README.md#installation-instructions).
 
-See the [Node.js vulnerabilities blog](https://nodejs.org/en/blog/vulnerability/) and the [GitHub node releases](https://github.com/nodejs/node/releases) for keeping up to date with the latest versions.
+See the [Node.js vulnerabilities blog](https://nodejs.org/en/blog/vulnerability/) and the [GitHub node releases](https://github.com/nodejs/node/releases) for the latest versions.
 
 ## Role variables
 
@@ -17,7 +17,7 @@ See the [defaults/main.yml](defaults/main.yml) file for the default variables, t
 | `nodejs_install`       | `nodesource`   | Set to `binary` for [tar archives from GitHub](https://github.com/nodejs/node/releases) or `nodesource` for a [apt install](https://github.com/nodesource/distributions)                                                                                                                |
 | `nodejs_packages`      | `[]`           | Additional node packages to install                                                                                                                                                                                                                                                     |
 | `nodejs_src`           | `false`        | Set to `true` to enable the NodeSource source package repo                                                                                                                                                                                                                              |
-| `nodejs_version`       | `16`           | For binary installs a [version number](https://github.com/nodejs/node/releases) like `16.15.1` or a symlink from [the archive](https://nodejs.org/dist/) like `latest-v16.x` or `latest` for the very latest release, for NodeSource `apt` based installs an integer, for example `16`  |
+| `nodejs_version`       | `20`           | For binary installs a [version number](https://github.com/nodejs/node/releases) like `16.15.1` or a symlink from [the archive](https://nodejs.org/dist/) like `latest-v16.x` or `latest` for the very latest release, for NodeSource `apt` based installs an quoted integer, for example `"16"`  |
 
 ## Usage
 

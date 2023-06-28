@@ -13,5 +13,5 @@ nodejs_download_path: /root/nodejs
 nodejs_install: nodesource
 nodejs_packages: []
 nodejs_src: false
-nodejs_version: 20
+nodejs_version: "20"
 ...
