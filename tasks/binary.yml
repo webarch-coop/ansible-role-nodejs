@@ -58,7 +58,7 @@
             url: "https://nodejs.org/dist/{{ nodejs_version }}/SHASUMS256.txt"
             dest: "{{ nodejs_download_path }}/SHASUMS256.txt"
             force: true
-            mode: 0644
+            mode: "0644"
             owner: root
             group: root
 
@@ -109,7 +109,7 @@
       ansible.builtin.file:
         path: "{{ nodejs_download_path }}"
         state: directory
-        mode: 0700
+        mode: "0700"
         owner: root
         group: root
 
@@ -118,7 +118,7 @@
         url: "https://nodejs.org/dist/v{{ nodejs_version_required }}/SHASUMS256.txt.sig"
         dest: "{{ nodejs_download_path }}/SHASUMS256.txt.sig"
         force: true
-        mode: 0644
+        mode: "0644"
         owner: root
         group: root
 
@@ -127,7 +127,7 @@
         url: "https://nodejs.org/dist/v{{ nodejs_version_required }}/SHASUMS256.txt"
         dest: "{{ nodejs_download_path }}/SHASUMS256.txt"
         force: true
-        mode: 0644
+        mode: "0644"
         owner: root
         group: root
 
@@ -136,7 +136,7 @@
         url: "https://nodejs.org/dist/v{{ nodejs_version_required }}/node-v{{ nodejs_version_required }}-{{ nodejs_arch }}.tar.gz"
         dest: "{{ nodejs_download_path }}/node-v{{ nodejs_version_required }}-{{ nodejs_arch }}.tar.gz"
         timeout: 30
-        mode: 0644
+        mode: "0644"
         owner: root
         group: root
 
@@ -154,7 +154,7 @@
       ansible.builtin.file:
         path: /usr/local/lib/nodejs
         state: directory
-        mode: 0755
+        mode: "0755"
         owner: root
         group: root
 
@@ -177,7 +177,7 @@
         dest: "{{ file.dest }}"
         state: link
         follow: false
-        mode: 0777
+        mode: "0777"
         owner: root
         group: root
       loop:

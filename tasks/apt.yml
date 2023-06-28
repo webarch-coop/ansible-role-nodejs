@@ -50,7 +50,7 @@
       ansible.builtin.file:
         path: /etc/apt/keyrings
         state: directory
-        mode: 0755
+        mode: "0755"
         owner: root
         group: root
 
@@ -60,7 +60,7 @@
         checksum: "{{ nodejs_nodesource_gpg_checksum }}"
         dest: /root/nodejs.asc
         force: true
-        mode: 0644
+        mode: "0644"
         owner: root
         group: root
       register: nodejs_gpg_asc_file
@@ -137,7 +137,7 @@
       ansible.builtin.template:
         src: nodejs.sources.j2
         dest: /etc/apt/sources.list.d/node.sources
-        mode: 0644
+        mode: "0644"
         owner: root
         group: root
       register: nodejs_sources
@@ -146,7 +146,7 @@
       ansible.builtin.template:
         src: nodejs.pref.j2
         dest: /etc/apt/preferences.d/node.pref
-        mode: 0644
+        mode: "0644"
         owner: root
         group: root
       register: nodejs_preferences
