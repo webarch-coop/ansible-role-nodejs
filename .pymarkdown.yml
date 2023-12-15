@@ -8,8 +8,7 @@
 #
 # You should have received a copy of the GNU General Public License along with the Webarchitects Node.js Ansible role. If not, see <https://www.gnu.org/licenses/>.
 ---
-- name: apt
-  src: https://git.coop/webarch/apt.git
-  version: 3.0.2  # apt
-  scm: git
+plugins:
+  md013:
+    enabled: false
 ...
