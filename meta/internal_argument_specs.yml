@@ -12,6 +12,18 @@ argument_specs:
   main:
     short_description: The main entry point for the nodejs role.
     options:
+      nodejs_argument_spec:
+        type: dict
+        required: true
+        description: Argument spec dictionary.
+      nodejs_combined_argument_spec:
+        type: dict
+        required: true
+        description: Internal combined argument spec dictionary.
+      nodejs_internal_argument_spec:
+        type: dict
+        required: true
+        description: Internal argument spec dictionary.
       nodejs_nodesource_gpg_checksum:
         type: str
         required: true
