@@ -1,0 +1,30 @@
+# Copyright 2020-2024 Chris Croome
+#
+# This file is part of the Webarchitects Node.js Ansible role.
+#
+# The Webarchitects Node.js Ansible role is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+#
+# The Webarchitects Node.js Ansible role is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with the Webarchitects Node.js Ansible role. If not, see <https://www.gnu.org/licenses/>.
+---
+- name: Read the Node.js apt sources file
+  block:
+
+    - name: Slurp /etc/apt/sources.list.d/node.sources
+      ansible.builtin.slurp:
+        src: /etc/apt/sources.list.d/node.sources
+      register: nodejs_sources_contents_b64encoded
+
+    - name: Decode the base64 encoded version of /etc/apt/sources.list.d/node.sources
+      ansible.builtin.set_fact:
+        nodejs_sources_contents: "{{ nodejs_sources_contents_b64encoded['content'] | ansible.builtin.b64decode | community.general.jc('ini') }}"
+
+    - name: Print the contents of /etc/apt/sources.list.d/node.sources
+      ansible.builtin.debug:
+        var: nodejs_sources_contents
+
+  when: nodejs_sources_path.stat.exists | bool
+  tags:
+    - nodejs
+...

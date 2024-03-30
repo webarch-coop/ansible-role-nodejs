@@ -8,7 +8,7 @@
 #
 # You should have received a copy of the GNU General Public License along with the Webarchitects Node.js Ansible role. If not, see <https://www.gnu.org/licenses/>.
 ---
-- name: Configure APT for NodeJS
+- name: Configure APT for Node.js
   block:
 
     - name: Dependancies present
@@ -17,13 +17,13 @@
           - apt-transport-https
         state: present
 
-    - name: Find legacy NodeJS apt list files
+    - name: Find legacy Node.js apt list files
       ansible.builtin.find:
         paths: /etc/apt/sources.list.d
         patterns: "*node*.list"
       register: nodejs_old_apt_list_files
 
-    - name: List legacy NodeJS apt list files to be disabled
+    - name: List legacy Node.js apt list files to be disabled
       ansible.builtin.debug:
         msg: "apt list file {{ file.path }} to be moved to {{ file.path }}.ansible.save"
       loop: "{{ nodejs_old_apt_list_files.files }}"
@@ -32,7 +32,7 @@
         label: "{{ file.path | basename }}"
       when: ( nodejs_old_apt_list_files.matched >= 1 )
 
-    - name: Disable legacy NodeJS apt list files
+    - name: Disable legacy Node.js apt list files
       ansible.builtin.command: "mv {{ file.path }} {{ file.path }}.ansible.save"
       loop: "{{ nodejs_old_apt_list_files.files }}"
       loop_control:
@@ -41,7 +41,7 @@
       when: ( nodejs_old_apt_list_files.matched >= 1 )
       changed_when: true
 
-    - name: Legacy NodeJS GPG key absent
+    - name: Legacy Node.js GPG key absent
       ansible.builtin.apt_key:
         id: 9FD3B784BC1C6FC31A8A0A1C1655A0AB68576280
         state: absent
@@ -54,7 +54,7 @@
         owner: root
         group: root
 
-    - name: NodeJS ASCII armored GPG key present
+    - name: Node.js ASCII armored GPG key present
       ansible.builtin.get_url:
         url: "{{ nodejs_nodesource_gpg_url }}"
         checksum: "{{ nodejs_nodesource_gpg_checksum }}"
@@ -65,7 +65,7 @@
         group: root
       register: nodejs_gpg_asc_file
 
-    - name: Stat NodeJS GPG ASCII armored file
+    - name: Stat Node.js GPG ASCII armored file
       ansible.builtin.stat:
         path: /root/nodejs.asc
       register: nodejs_asc_file
@@ -73,12 +73,12 @@
     - name: Check gpg key when it exists
       block:
 
-        - name: Stat NodeJS GPG dearmored file
+        - name: Stat Node.js GPG dearmored file
           ansible.builtin.stat:
             path: /etc/apt/keyrings/nodejs.gpg
           register: nodejs_gpg_file
 
-        - name: NodeJS GPG key dearmored
+        - name: Node.js GPG key dearmored
           ansible.builtin.shell: |-
             set -e -o pipefail
             gpg --dearmor < /root/nodejs.asc > /etc/apt/keyrings/nodejs.gpg
@@ -90,12 +90,12 @@
             ( nodejs_gpg_asc_file.changed | bool ) or
             ( not nodejs_gpg_file.stat.exists | bool )
 
-        - name: Stat NodeJS GPG dearmored file
+        - name: Stat Node.js GPG dearmored file
           ansible.builtin.stat:
             path: /etc/apt/keyrings/nodejs.gpg
           register: nodejs_gpg_file
 
-        - name: NodeJS GPG key check command
+        - name: Node.js GPG key check command
           ansible.builtin.command: >
             gpg --with-colons
             {% if ansible_local.gpg.version is version('2.2.12', '<') %}
@@ -118,13 +118,13 @@
             var: nodejs_nodesource_gpg_fingerprints_found
             verbosity: 2
 
-        - name: NodeJS GPG key check only first fingerprint for GPG versions less that 2.2.12
+        - name: Node.js GPG key check only first fingerprint for GPG versions less that 2.2.12
           ansible.builtin.assert:
             that:
               - nodejs_nodesource_gpg_fingerprints[0] == nodejs_nodesource_gpg_fingerprints_found[0]
           when: ( ansible_local.gpg.version is version('2.2.12', '<') )
 
-        - name: NodeJS GPG key check all fingerprints
+        - name: Node.js GPG key check all fingerprints
           ansible.builtin.assert:
             that:
               - nodejs_nodesource_gpg_fingerprints_found | difference(nodejs_nodesource_gpg_fingerprints) | length == 0
@@ -133,7 +133,16 @@
 
       when: ( nodejs_asc_file.stat.exists | bool )
 
-    - name: NodeJS apt sources file present
+    - name: Stat Node.js apt sources file
+      ansible.builtin.stat:
+        path: /etc/apt/sources.list.d/node.sources
+      register: nodejs_sources_path
+
+    - name: Read the Node.js apt sources file
+      ansible.builtin.include_tasks: sources_file.yml
+      when: nodejs_sources_path.stat.exists | bool
+
+    - name: Node.js apt sources file present
       ansible.builtin.deb822_repository:
         allow_downgrade_to_insecure: false
         allow_insecure: false
@@ -150,7 +159,16 @@
         uris: "https://deb.nodesource.com/node_{{ nodejs_version }}.x"
       register: nodejs_sources
 
-    - name: NodeJS apt preferences present
+    - name: Stat Node.js apt sources file
+      ansible.builtin.stat:
+        path: /etc/apt/sources.list.d/node.sources
+      register: nodejs_sources_path
+
+    - name: Read the Node.js apt sources file
+      ansible.builtin.include_tasks: sources_file.yml
+      when: nodejs_sources_path.stat.exists | bool
+
+    - name: Node.js apt preferences present
       ansible.builtin.template:
         src: nodejs.pref.j2
         dest: /etc/apt/preferences.d/node.pref
