@@ -23,6 +23,7 @@
     - name: Print the contents of /etc/apt/sources.list.d/node.sources
       ansible.builtin.debug:
         var: nodejs_sources_contents
+        verbosity: "{% if ansible_check_mode | bool %}0{% else %}1{% endif %}"
 
   when: nodejs_sources_path.stat.exists | bool
   tags:

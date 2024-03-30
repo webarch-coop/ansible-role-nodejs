@@ -142,6 +142,11 @@
       ansible.builtin.include_tasks: sources_file.yml
       when: nodejs_sources_path.stat.exists | bool
 
+    - name: Set a fact for the prior Node.js apt sources file contents
+      ansible.builtin.set_fact:
+        nodejs_sources_contents_prior: "{{ nodejs_sources_contents }}"
+      when: nodejs_sources_contents is defined
+
     - name: Node.js apt sources file present
       ansible.builtin.deb822_repository:
         allow_downgrade_to_insecure: false
@@ -167,6 +172,22 @@
     - name: Read the Node.js apt sources file
       ansible.builtin.include_tasks: sources_file.yml
       when: nodejs_sources_path.stat.exists | bool
+
+    - name: Set a fact for the updated Node.js apt sources file contents
+      ansible.builtin.set_fact:
+        nodejs_sources_contents_updated: "{{ nodejs_sources_contents }}"
+      when: nodejs_sources_contents is defined
+
+    - name: Diff Node.js apt sources file update
+      ansible.utils.fact_diff:
+        before: "{{ nodejs_sources_contents_prior }}"
+        after: "{{ nodejs_sources_contents_updated }}"
+      check_mode: false
+      changed_when: false
+      when:
+        - nodejs_sources_contents_prior is defined
+        - nodejs_sources_contents_updated is defined
+        - nodejs_sources_contents_prior != nodejs_sources_contents_updated
 
     - name: Node.js apt preferences present
       ansible.builtin.template:
