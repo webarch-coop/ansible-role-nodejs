@@ -21,10 +21,19 @@
         var: nodejshostvars
         verbosity: "{% if ansible_check_mode | bool %}3{% else %}4{% endif %}"
 
-    - name: Check nodejs_ variables using meta/argument_specs.yml
+    - name: Set a fact for the argument spec and internal argument spec
+      ansible.builtin.set_fact:
+        nodejs_argument_spec: "{{ (lookup('ansible.builtin.file', 'meta/argument_specs.yml') | from_yaml) }}"
+        nodejs_internal_argument_spec: "{{ (lookup('ansible.builtin.file', 'meta/internal_argument_specs.yml') | from_yaml) }}"
+
+    - name: Set a fact for the combined argument spec and internal argument spec
+      ansible.builtin.set_fact:
+        nodejs_combined_argument_spec: "{{ nodejs_argument_spec | ansible.builtin.combine(nodejs_internal_argument_spec, recursive=true) }}"
+
+    - name: Check nodejs_ variables using the combined argument spec
       ansible.builtin.validate_argument_spec:
-        argument_spec: "{{ (lookup('ansible.builtin.file', 'meta/argument_specs.yml') | from_yaml)['argument_specs']['main']['options'] }}"
-        provided_arguments: "{{ nodejshostvars }}"
+        argument_spec: "{{ nodejs_combined_argument_spec['argument_specs']['main']['options'] }}"
+        provided_arguments: "{{ mariadbhostvars }}"
 
   when:
     - nodejs_verify is defined

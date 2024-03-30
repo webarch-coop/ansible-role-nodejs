@@ -1,0 +1,38 @@
+# Copyright 2020-2024 Chris Croome
+#
+# This file is part of the Webarchitects Node.js Ansible role.
+#
+# The Webarchitects Node.js Ansible role is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+#
+# The Webarchitects Node.js Ansible role is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with the Webarchitects Node.js Ansible role. If not, see <https://www.gnu.org/licenses/>.
+---
+argument_specs:
+  main:
+    short_description: The main entry point for the nodejs role.
+    options:
+      nodejs_nodesource_gpg_checksum:
+        type: str
+        required: true
+        description: Internal string for the Node.js GPG key SHA256 checksum.
+      nodejs_nodesource_gpg_fingerprints:
+        type: list
+        elements: str
+        required: true
+        description: Internal list of Node.js GPG key fingerprints.
+      nodejs_nodesource_gpg_url:
+        type: str
+        required: true
+        description: Internal string for the Node.js GPG URL.
+      nodejs_nodesource_pkg:
+        type: list
+        elements: str
+        required: true
+        description: Internal list of packages that can be installed from the Node.js repo.
+      nodejs_release_keys:
+        type: list
+        elements: str
+        required: true
+        description: Internal list of Node.js GPG release key fingerprints.
+...
