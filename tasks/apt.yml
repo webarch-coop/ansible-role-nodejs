@@ -133,13 +133,21 @@
 
       when: ( nodejs_asc_file.stat.exists | bool )
 
-    - name: NodeJS repository sources file present
-      ansible.builtin.template:
-        src: nodejs.sources.j2
-        dest: /etc/apt/sources.list.d/node.sources
-        mode: "0644"
-        owner: root
-        group: root
+    - name: NodeJS apt sources file present
+      ansible.builtin.deb822_repository:
+        allow_downgrade_to_insecure: false
+        allow_insecure: false
+        allow_weak: false
+        architectures: "{{ ansible_facts.ansible_local.dpkg.arch }}"
+        check_date: true
+        check_valid_until: true
+        components: main
+        enabled: true
+        name: "{{ apt_source.name }}"
+        signed_by: /etc/apt/keyrings/nodejs.gpg
+        suites: "{{ ansible_distribution_release }}"
+        types: deb
+        uris: "https://deb.nodesource.com/node_{{ nodejs_version }}.x"
       register: nodejs_sources
 
     - name: NodeJS apt preferences present
