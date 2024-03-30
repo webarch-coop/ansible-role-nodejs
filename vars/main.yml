@@ -8,6 +8,10 @@
 #
 # You should have received a copy of the GNU General Public License along with the Webarchitects Node.js Ansible role. If not, see <https://www.gnu.org/licenses/>.
 ---
+# https://docs.ansible.com/ansible/latest/playbook_guide/complex_data_manipulation.html
+nodejsvarnames: "{{ q('varnames', '^nodejs_') | sort }}"
+nodejshostvars: "{{ dict(nodejsvarnames | list | zip(q('vars', *nodejsvarnames))) }}"
+
 # ASCII armored GPG public key URL linked from
 # https://github.com/nodesource/distributions#debmanual
 nodejs_nodesource_gpg_url: https://deb.nodesource.com/gpgkey/nodesource.gpg.key

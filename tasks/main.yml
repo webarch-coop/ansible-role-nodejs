@@ -18,11 +18,13 @@
 - name: Install and upgrade Node.js
   block:
 
-    - name: Variables checked
-      ansible.builtin.assert:
-        that:
-          - nodejs_install is regex('^binary|nodesource$')
-        quiet: "{% if ansible_verbosity == 0 %}true{% else %}false{% endif %}"
+    - name: Variables checked using the argument spec
+      ansible.builtin.include_tasks: verify.yml
+      when:
+        - nodejs_verify is defined
+        - nodejs_verify | bool
+      tags:
+        - nodejs_verify
 
     - name: Binary install variables checked
       ansible.builtin.assert:

@@ -143,7 +143,7 @@
         check_valid_until: true
         components: main
         enabled: true
-        name: "{{ apt_source.name }}"
+        name: node
         signed_by: /etc/apt/keyrings/nodejs.gpg
         suites: "{{ ansible_distribution_release }}"
         types: deb

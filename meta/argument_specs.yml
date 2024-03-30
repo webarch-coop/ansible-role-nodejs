@@ -36,6 +36,10 @@ argument_specs:
         type: bool
         required: true
         description: Install the Node.js source code.
+      nodejs_verify:
+        type: bool
+        required: true
+        description: Verify all nodejs_ variables using the argument spec.
       nodejs_version:
         type: str
         required: true
