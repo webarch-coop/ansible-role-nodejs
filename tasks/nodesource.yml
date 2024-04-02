@@ -57,6 +57,8 @@
           ansible.builtin.apt:
             pkg:
               - nodejs
+            autoclean: true
+            autoremove: true
             state: absent
           when: ( nodejs_installed | int ) > ( nodejs_version | int )
 
