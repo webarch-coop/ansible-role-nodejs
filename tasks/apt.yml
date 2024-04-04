@@ -164,30 +164,21 @@
         uris: "https://deb.nodesource.com/node_{{ nodejs_version }}.x"
       register: nodejs_sources
 
-    - name: Stat Node.js apt sources file
-      ansible.builtin.stat:
-        path: /etc/apt/sources.list.d/node.sources
-      register: nodejs_sources_path
-
-    - name: Read the Node.js apt sources file
-      ansible.builtin.include_tasks: sources_file.yml
-      when: nodejs_sources_path.stat.exists | bool
-
-    - name: Set a fact for the updated Node.js apt sources file contents
-      ansible.builtin.set_fact:
-        nodejs_sources_contents_updated: "{{ nodejs_sources_contents }}"
-      when: nodejs_sources_contents is defined
+    - name: Debug nodejs_sources
+      ansible.builtin.debug:
+        var: nodejs_sources
+        verbosity: "{% if ansible_check_mode | bool %}1{% else %}2{% endif %}"
 
     - name: Diff Node.js apt sources file update
       ansible.utils.fact_diff:
         before: "{{ nodejs_sources_contents_prior }}"
-        after: "{{ nodejs_sources_contents_updated }}"
+        after: "{{ nodejs_sources.repo | string | community.general.jc('ini') }}"
       check_mode: false
       changed_when: false
       when:
+        - ( ansible_check_mode | bool ) or ( ansible_diff_mode | bool )
         - nodejs_sources_contents_prior is defined
-        - nodejs_sources_contents_updated is defined
-        - nodejs_sources_contents_prior != nodejs_sources_contents_updated
+        - nodejs_sources.repo is defined
 
     - name: Node.js apt preferences present
       ansible.builtin.template:
