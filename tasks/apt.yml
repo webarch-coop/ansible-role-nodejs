@@ -125,6 +125,7 @@
           ansible.builtin.assert:
             that:
               - nodejs_nodesource_gpg_fingerprints[0] == nodejs_nodesource_gpg_fingerprints_found[0]
+            quiet: "{% if ansible_verbosity == 0 %}true{% else %}false{% endif %}"
           when: ( ansible_local.gpg.version is version('2.2.12', '<') )
 
         - name: Node.js GPG key check all fingerprints
@@ -132,6 +133,7 @@
             that:
               - nodejs_nodesource_gpg_fingerprints_found | difference(nodejs_nodesource_gpg_fingerprints) | length == 0
               - nodejs_nodesource_gpg_fingerprints | difference(nodejs_nodesource_gpg_fingerprints_found) | length == 0
+            quiet: "{% if ansible_verbosity == 0 %}true{% else %}false{% endif %}"
           when: ( ansible_local.gpg.version is version('2.2.12', '>=') )
 
         - name: Stat Node.js apt sources file
