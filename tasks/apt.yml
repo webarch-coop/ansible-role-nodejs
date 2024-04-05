@@ -195,7 +195,7 @@
                 nodejs_date_timestamp: "{{ ansible_date_time.iso8601_basic_short }}"
               when: nodejs_sources_contents_prior != nodejs_sources_check.repo | string | community.general.jc('ini')
 
-          when: docker_sources_path.stat.exists | bool
+          when: nodejs_sources_path.stat.exists | bool
 
         - name: Node.js apt sources file present
           ansible.builtin.deb822_repository:
