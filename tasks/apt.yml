@@ -139,16 +139,16 @@
         - name: Read and backup Node.js repository sources file
           block:
 
-            - name: Slurp /etc/apt/sources.list.d/nodejs.sources
+            - name: Slurp /etc/apt/sources.list.d/node.sources
               ansible.builtin.slurp:
-                src: /etc/apt/sources.list.d/nodejs.sources
+                src: /etc/apt/sources.list.d/node.sources
               register: nodejs_sources_contents_b64encoded
 
-            - name: Decode the base64 encoded version of /etc/apt/sources.list.d/nodejs.sources
+            - name: Decode the base64 encoded version of /etc/apt/sources.list.d/node.sources
               ansible.builtin.set_fact:
                 nodejs_sources_contents: "{{ nodejs_sources_contents_b64encoded['content'] | ansible.builtin.b64decode | string | community.general.jc('ini') }}"
 
-            - name: Print the contents of /etc/apt/sources.list.d/nodejs.sources
+            - name: Print the contents of /etc/apt/sources.list.d/node.sources
               ansible.builtin.debug:
                 var: nodejs_sources_contents
                 verbosity: "{% if ansible_check_mode | bool or ansible_diff_mode | bool %}1{% else %}2{% endif %}"
@@ -186,11 +186,11 @@
               ansible.builtin.command:
                 cmd: >-
                   mv
-                  /etc/apt/sources.list.d/nodejs.sources
+                  /etc/apt/sources.list.d/node.sources
                   /etc/apt/sources.list.d/.nodejs.sources.{{ nodejs_date_timestamp }}.ansible.save
               args:
                 creates: "/etc/apt/sources.list.d/.nodejs.sources.{{ nodejs_date_timestamp }}.ansible.save"
-                removes: /etc/apt/sources.list.d/nodejs.sources
+                removes: /etc/apt/sources.list.d/node.sources
               vars:
                 nodejs_date_timestamp: "{{ ansible_date_time.iso8601_basic_short }}"
               when: nodejs_sources_contents_prior != nodejs_sources_check.repo | string | community.general.jc('ini')
