@@ -87,6 +87,7 @@
             chmod 644 /etc/apt/keyrings/nodejs.gpg
           args:
             executable: "{{ ansible_local.bash.path }}"
+          check_mode: false
           changed_when: false
           when:
             ( nodejs_gpg_asc_file.changed | bool ) or
