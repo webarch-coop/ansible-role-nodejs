@@ -19,6 +19,7 @@
     - name: Debug ansible_effective_user_id
       ansible.builtin.debug:
         var: ansible_effective_user_id
+        verbosity: 1
 
     - name: Include nodejs role as root
       ansible.builtin.include_role:
