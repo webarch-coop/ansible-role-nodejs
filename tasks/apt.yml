@@ -131,54 +131,109 @@
               - nodejs_nodesource_gpg_fingerprints | difference(nodejs_nodesource_gpg_fingerprints_found) | length == 0
           when: ( ansible_local.gpg.version is version('2.2.12', '>=') )
 
+        - name: Stat Node.js apt sources file
+          ansible.builtin.stat:
+            path: /etc/apt/sources.list.d/node.sources
+          register: nodejs_sources_path
+
+        - name: Read and backup Node.js repository sources file
+          block:
+
+            - name: Slurp /etc/apt/sources.list.d/nodejs.sources
+              ansible.builtin.slurp:
+                src: /etc/apt/sources.list.d/nodejs.sources
+              register: nodejs_sources_contents_b64encoded
+
+            - name: Decode the base64 encoded version of /etc/apt/sources.list.d/nodejs.sources
+              ansible.builtin.set_fact:
+                nodejs_sources_contents: "{{ nodejs_sources_contents_b64encoded['content'] | ansible.builtin.b64decode | string | community.general.jc('ini') }}"
+
+            - name: Print the contents of /etc/apt/sources.list.d/nodejs.sources
+              ansible.builtin.debug:
+                var: nodejs_sources_contents
+                verbosity: "{% if ansible_check_mode | bool or ansible_diff_mode | bool %}1{% else %}2{% endif %}"
+
+            - name: Set a fact for the prior Node.js repository sources file contents
+              ansible.builtin.set_fact:
+                nodejs_sources_contents_prior: "{{ nodejs_sources_contents }}"
+              when: nodejs_sources_contents is defined
+
+            - name: Check Node.js repository sources file present
+              ansible.builtin.deb822_repository:
+                allow_downgrade_to_insecure: false
+                allow_insecure: false
+                allow_weak: false
+                architectures: "{{ ansible_facts.ansible_local.dpkg.arch }}"
+                check_date: true
+                check_valid_until: true
+                components: main
+                enabled: true
+                name: node
+                signed_by: /etc/apt/keyrings/nodejs.gpg
+                suites: "{{ ansible_distribution_release }}"
+                types: deb
+                uris: "https://deb.nodesource.com/node_{{ nodejs_version }}.x"
+              check_mode: true
+              changed_when: false
+              register: nodejs_sources_check
+
+            - name: Debug proposed nodejs_sources_check.repo
+              ansible.builtin.debug:
+                var: nodejs_sources_check.repo
+                verbosity: "{% if ansible_check_mode | bool or ansible_diff_mode | bool %}1{% else %}2{% endif %}"
+
+            - name: Backup old nodejs.sources file
+              ansible.builtin.command:
+                cmd: >-
+                  mv
+                  /etc/apt/sources.list.d/nodejs.sources
+                  /etc/apt/sources.list.d/.nodejs.sources.{{ nodejs_date_timestamp }}.ansible.save
+              args:
+                creates: "/etc/apt/sources.list.d/.nodejs.sources.{{ nodejs_date_timestamp }}.ansible.save"
+                removes: /etc/apt/sources.list.d/nodejs.sources
+              vars:
+                nodejs_date_timestamp: "{{ ansible_date_time.iso8601_basic_short }}"
+              when: nodejs_sources_contents_prior != nodejs_sources_check.repo | string | community.general.jc('ini')
+
+          when: docker_sources_path.stat.exists | bool
+
+        - name: Node.js apt sources file present
+          ansible.builtin.deb822_repository:
+            allow_downgrade_to_insecure: false
+            allow_insecure: false
+            allow_weak: false
+            architectures: "{{ ansible_facts.ansible_local.dpkg.arch }}"
+            check_date: true
+            check_valid_until: true
+            components: main
+            enabled: true
+            name: node
+            signed_by: /etc/apt/keyrings/nodejs.gpg
+            suites: "{{ ansible_distribution_release }}"
+            types: deb
+            uris: "https://deb.nodesource.com/node_{{ nodejs_version }}.x"
+          register: nodejs_sources
+
+        - name: Print the changes in the Node.js repository sources file  # noqa: no-handler
+          block:
+
+            - name: Debug updated nodejs_sources.repo
+              ansible.builtin.debug:
+                var: nodejs_sources.repo
+                verbosity: "{% if ansible_check_mode | bool or ansible_diff_mode | bool %}1{% else %}2{% endif %}"
+
+            - name: Diff Node.js repository sources file update
+              ansible.utils.fact_diff:
+                before: "{{ nodejs_sources_contents_prior | ansible.builtin.to_nice_yaml }}"
+                after: "{{ nodejs_sources.repo | string | community.general.jc('ini') | ansible.builtin.to_nice_yaml }}"
+              when:
+                - ( ansible_check_mode | bool ) or ( ansible_diff_mode | bool )
+                - nodejs_sources_contents_prior is defined
+                - nodejs_sources.repo is defined
+
+          when: nodejs_sources.changed | bool
+
       when: ( nodejs_asc_file.stat.exists | bool )
-
-    - name: Stat Node.js apt sources file
-      ansible.builtin.stat:
-        path: /etc/apt/sources.list.d/node.sources
-      register: nodejs_sources_path
-
-    - name: Read the Node.js apt sources file
-      ansible.builtin.include_tasks: sources_file.yml
-      when: nodejs_sources_path.stat.exists | bool
-
-    - name: Set a fact for the prior Node.js apt sources file contents
-      ansible.builtin.set_fact:
-        nodejs_sources_contents_prior: "{{ nodejs_sources_contents }}"
-      when: nodejs_sources_contents is defined
-
-    - name: Node.js apt sources file present
-      ansible.builtin.deb822_repository:
-        allow_downgrade_to_insecure: false
-        allow_insecure: false
-        allow_weak: false
-        architectures: "{{ ansible_facts.ansible_local.dpkg.arch }}"
-        check_date: true
-        check_valid_until: true
-        components: main
-        enabled: true
-        name: node
-        signed_by: /etc/apt/keyrings/nodejs.gpg
-        suites: "{{ ansible_distribution_release }}"
-        types: deb
-        uris: "https://deb.nodesource.com/node_{{ nodejs_version }}.x"
-      register: nodejs_sources
-
-    - name: Debug nodejs_sources
-      ansible.builtin.debug:
-        var: nodejs_sources
-        verbosity: "{% if ansible_check_mode | bool %}1{% else %}2{% endif %}"
-
-    - name: Diff Node.js apt sources file update
-      ansible.utils.fact_diff:
-        before: "{{ nodejs_sources_contents_prior }}"
-        after: "{{ nodejs_sources.repo | string | community.general.jc('ini') }}"
-      check_mode: false
-      changed_when: false
-      when:
-        - ( ansible_check_mode | bool ) or ( ansible_diff_mode | bool )
-        - nodejs_sources_contents_prior is defined
-        - nodejs_sources.repo is defined
 
     - name: Node.js apt preferences present
       ansible.builtin.template:
