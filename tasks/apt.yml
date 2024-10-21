@@ -168,7 +168,7 @@
                 allow_downgrade_to_insecure: false
                 allow_insecure: false
                 allow_weak: false
-                architectures: "{{ ansible_facts.ansible_facts.ansible_local.dpkg.arch }}"
+                architectures: "{{ ansible_facts.ansible_local.dpkg.arch }}"
                 check_date: true
                 check_valid_until: true
                 components: main
