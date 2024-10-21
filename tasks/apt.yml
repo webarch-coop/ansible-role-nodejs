@@ -86,7 +86,7 @@
             gpg --dearmor < /root/nodejs.asc > /etc/apt/keyrings/nodejs.gpg
             chmod 644 /etc/apt/keyrings/nodejs.gpg
           args:
-            executable: "{{ ansible_local.bash.path }}"
+            executable: "{{ ansible_facts.ansible_local.bash.path }}"
           check_mode: false
           changed_when: false
           when:
@@ -101,7 +101,7 @@
         - name: Node.js GPG key check command
           ansible.builtin.command: >
             gpg --with-colons
-            {% if ansible_local.gpg.version is version('2.2.12', '<') %}
+            {% if ansible_facts.ansible_local.gpg.version is version('2.2.12', '<') %}
             --with-fingerprint --with-subkey-fingerprint
             {% else %}
             --show-keys
@@ -126,7 +126,7 @@
             that:
               - nodejs_nodesource_gpg_fingerprints[0] == nodejs_nodesource_gpg_fingerprints_found[0]
             quiet: "{% if ansible_verbosity == 0 %}true{% else %}false{% endif %}"
-          when: ( ansible_local.gpg.version is version('2.2.12', '<') )
+          when: ( ansible_facts.ansible_local.gpg.version is version('2.2.12', '<') )
 
         - name: Node.js GPG key check all fingerprints
           ansible.builtin.assert:
@@ -134,7 +134,7 @@
               - nodejs_nodesource_gpg_fingerprints_found | difference(nodejs_nodesource_gpg_fingerprints) | length == 0
               - nodejs_nodesource_gpg_fingerprints | difference(nodejs_nodesource_gpg_fingerprints_found) | length == 0
             quiet: "{% if ansible_verbosity == 0 %}true{% else %}false{% endif %}"
-          when: ( ansible_local.gpg.version is version('2.2.12', '>=') )
+          when: ( ansible_facts.ansible_local.gpg.version is version('2.2.12', '>=') )
 
         - name: Stat Node.js apt sources file
           ansible.builtin.stat:
@@ -168,7 +168,7 @@
                 allow_downgrade_to_insecure: false
                 allow_insecure: false
                 allow_weak: false
-                architectures: "{{ ansible_facts.ansible_local.dpkg.arch }}"
+                architectures: "{{ ansible_facts.ansible_facts.ansible_local.dpkg.arch }}"
                 check_date: true
                 check_valid_until: true
                 components: main
@@ -176,7 +176,7 @@
                 name: node
                 pdiffs: true
                 signed_by: /etc/apt/keyrings/nodejs.gpg
-                suites: "{{ ansible_distribution_release }}"
+                suites: "{{ ansible_facts.distribution_release }}"
                 types: deb
                 uris: "https://deb.nodesource.com/node_{{ nodejs_version }}.x"
               check_mode: true
@@ -198,7 +198,7 @@
                 creates: "/etc/apt/sources.list.d/.nodejs.sources.{{ nodejs_date_timestamp }}.ansible.save"
                 removes: /etc/apt/sources.list.d/node.sources
               vars:
-                nodejs_date_timestamp: "{{ ansible_date_time.iso8601_basic_short }}"
+                nodejs_date_timestamp: "{{ ansible_facts.date_time.iso8601_basic_short }}"
               when: nodejs_sources_contents_prior != nodejs_sources_check.repo | string | community.general.jc('ini')
 
           when: nodejs_sources_path.stat.exists | bool
@@ -216,7 +216,7 @@
             name: node
             pdiffs: true
             signed_by: /etc/apt/keyrings/nodejs.gpg
-            suites: "{{ ansible_distribution_release }}"
+            suites: "{{ ansible_facts.distribution_release }}"
             types: deb
             uris: "https://deb.nodesource.com/node_{{ nodejs_version }}.x"
           register: nodejs_sources

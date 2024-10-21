@@ -21,7 +21,7 @@
     - name: Set a fact for the CPU architecture
       ansible.builtin.set_fact:
         nodejs_arch: linux-x64
-      when: ansible_local.dpkg.arch == "amd64"
+      when: ansible_facts.ansible_local.dpkg.arch == "amd64"
 
     - name: Check the latest version of Node.js
       block:
@@ -147,7 +147,7 @@
       changed_when: false
       check_mode: false
       args:
-        executable: "{{ ansible_local.bash.path }}"
+        executable: "{{ ansible_facts.ansible_local.bash.path }}"
         chdir: "{{ nodejs_download_path }}"
 
     - name: Node.js lib directory present

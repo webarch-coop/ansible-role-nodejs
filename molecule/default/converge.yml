@@ -11,14 +11,14 @@
 - name: Run as root
   # become: true
   connection: local
-  # gather_facts: true
+  gather_facts: true
   hosts:
     - localhost
   tasks:
 
-    - name: Debug ansible_effective_user_id
+    - name: Debug ansible_facts.effective_user_id
       ansible.builtin.debug:
-        var: ansible_effective_user_id
+        var: ansible_facts.effective_user_id
         verbosity: 1
 
     - name: Include nodejs role as root
