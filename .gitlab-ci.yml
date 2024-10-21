@@ -35,8 +35,8 @@ before_script:
 stages:
   - bookworm
   - jammy
-  - noble
-  # No trixie repo support yet
+  # No noble or trixie repo support yet
+  # - noble
   # - trixie
 bookworm:
   image: registry.git.coop/webarch/containers/images/bookworm:20241008
@@ -48,11 +48,11 @@ jammy:
   stage: jammy
   script:
     - molecule test
-noble:
-  image: registry.git.coop/webarch/containers/images/noble:20241008
-  stage: noble
-  script:
-    - molecule test
+# noble:
+#   image: registry.git.coop/webarch/containers/images/noble:20241008
+#   stage: noble
+#   script:
+#     - molecule test
 # trixie:
 #   image: registry.git.coop/webarch/containers/images/trixie:20241008
 #   stage: trixie
