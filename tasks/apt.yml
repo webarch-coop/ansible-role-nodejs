@@ -46,19 +46,16 @@
         id: 9FD3B784BC1C6FC31A8A0A1C1655A0AB68576280
         state: absent
 
-    - name: Apt keyrings directory present
+    - name: Legacy /etc/apt/keyrings/nodejs.gpg GPG key absent
       ansible.builtin.file:
-        path: /etc/apt/keyrings
-        state: directory
-        mode: "0755"
-        owner: root
-        group: root
+        path: /etc/apt/keyrings/nodejs.gpg
+        state: absent
 
     - name: Node.js ASCII armored GPG key present
       ansible.builtin.get_url:
         url: "{{ nodejs_nodesource_gpg_url }}"
         checksum: "{{ nodejs_nodesource_gpg_checksum }}"
-        dest: /root/nodejs.asc
+        dest: /root/nodesource.asc
         force: true
         mode: "0644"
         owner: root
@@ -69,7 +66,7 @@
 
     - name: Stat Node.js GPG ASCII armored file
       ansible.builtin.stat:
-        path: /root/nodejs.asc
+        path: /root/nodesource.asc
       register: nodejs_asc_file
 
     - name: Check gpg key when it exists
@@ -77,14 +74,14 @@
 
         - name: Stat Node.js GPG dearmored file
           ansible.builtin.stat:
-            path: /etc/apt/keyrings/nodejs.gpg
+            path: /usr/share/keyrings/nodesource.gpg
           register: nodejs_gpg_file
 
         - name: Node.js GPG key dearmored
           ansible.builtin.shell: |-
             set -e -o pipefail
-            gpg --dearmor < /root/nodejs.asc > /etc/apt/keyrings/nodejs.gpg
-            chmod 644 /etc/apt/keyrings/nodejs.gpg
+            gpg --dearmor < /root/nodesource.asc > /usr/share/keyrings/nodesource.gpg
+            chmod 644 /usr/share/keyrings/nodesource.gpg
           args:
             executable: "{{ ansible_facts.ansible_local.bash.path }}"
           check_mode: false
@@ -95,7 +92,7 @@
 
         - name: Stat Node.js GPG dearmored file
           ansible.builtin.stat:
-            path: /etc/apt/keyrings/nodejs.gpg
+            path: /usr/share/keyrings/nodesource.gpg
           register: nodejs_gpg_file
 
         - name: Node.js GPG key check command
@@ -106,7 +103,7 @@
             {% else %}
             --show-keys
             {% endif %}
-            /etc/apt/keyrings/nodejs.gpg
+            /usr/share/keyrings/nodesource.gpg
           when: nodejs_gpg_file.stat.exists | bool
           check_mode: false
           changed_when: false
@@ -175,7 +172,7 @@
                 enabled: true
                 name: node
                 pdiffs: true
-                signed_by: /etc/apt/keyrings/nodejs.gpg
+                signed_by: /usr/share/keyrings/nodesource.gpg
                 suites: nodistro
                 types: deb
                 uris: "https://deb.nodesource.com/node_{{ nodejs_version }}.x"
@@ -215,8 +212,8 @@
             enabled: true
             name: node
             pdiffs: true
-            signed_by: /etc/apt/keyrings/nodejs.gpg
-            suites: "{{ ansible_facts.distribution_release }}"
+            signed_by: /usr/share/keyrings/nodesource.gpg
+            suites: nodistro
             types: deb
             uris: "https://deb.nodesource.com/node_{{ nodejs_version }}.x"
           register: nodejs_sources
