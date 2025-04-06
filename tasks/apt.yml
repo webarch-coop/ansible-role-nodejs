@@ -39,6 +39,7 @@
       ansible.builtin.apt_key:
         id: 9FD3B784BC1C6FC31A8A0A1C1655A0AB68576280
         state: absent
+      when: ansible_facts.distribution_release is ansible.builtin.regex('^bullseye|bookwork|jammy|noble$')
 
     - name: Legacy /etc/apt/keyrings/nodejs.gpg GPG key absent
       ansible.builtin.file:
