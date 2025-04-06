@@ -11,12 +11,6 @@
 - name: Configure APT for Node.js
   block:
 
-    - name: Dependancies present
-      ansible.builtin.apt:
-        pkg:
-          - apt-transport-https
-        state: present
-
     - name: Find legacy Node.js apt list files
       ansible.builtin.find:
         paths: /etc/apt/sources.list.d
