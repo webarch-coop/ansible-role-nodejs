@@ -1,4 +1,4 @@
-# Copyright 2020-2024 Chris Croome
+# Copyright 2018-2025 Chris Croome
 #
 # This file is part of the Webarchitects Node.js Ansible role.
 #
@@ -176,7 +176,7 @@
                 name: node
                 pdiffs: true
                 signed_by: /etc/apt/keyrings/nodejs.gpg
-                suites: "{{ ansible_facts.distribution_release }}"
+                suites: nodistro
                 types: deb
                 uris: "https://deb.nodesource.com/node_{{ nodejs_version }}.x"
               check_mode: true

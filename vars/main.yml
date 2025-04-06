@@ -1,4 +1,4 @@
-# Copyright 2020-2024 Chris Croome
+# Copyright 2018-2025 Chris Croome
 #
 # This file is part of the Webarchitects Node.js Ansible role.
 #
@@ -13,18 +13,18 @@ nodejsvarnames: "{{ q('varnames', '^nodejs_') | sort }}"
 nodejshostvars: "{{ dict(nodejsvarnames | list | zip(q('vars', *nodejsvarnames))) }}"
 
 # ASCII armored GPG public key URL linked from
-# https://github.com/nodesource/distributions#debmanual
-nodejs_nodesource_gpg_url: https://deb.nodesource.com/gpgkey/nodesource.gpg.key
+# https://github.com/nodesource/distributions/blob/master/README.md#installation-instructions
+nodejs_nodesource_gpg_url: https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key
 
 # Get the sha256 checksum using the following command
-# wget -q https://deb.nodesource.com/gpgkey/nodesource.gpg.key -O - | sha256sum - | awk '{ print $1 }' | sed 's/^/"sha256:/' | sed 's/$/"/'
-nodejs_nodesource_gpg_checksum: "sha256:773b328f7b1d6db58a8c6a7fc89e2ed58ac5e06c3ab148411cf8272be7b1c472"
+# wget -q https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key -O - | sha256sum - | awk '{ print $1 }' | sed 's/^/"sha256:/' | sed 's/$/"/'
+nodejs_nodesource_gpg_checksum: "sha256:332d428848005f43bfc79b9578c55cd172f5f17ae38aa7d9328f03a24e21c13a"
 
 # Get the gpg fingerprints using the following command
-# wget -q https://deb.nodesource.com/gpgkey/nodesource.gpg.key -O - | gpg --dearmor | gpg --with-colons --show-keys - | grep ^fpr | sed 's/^fpr//' | sed 's/://g' | sed 's/^/  - /'
+# wget -q https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key -O - | gpg --dearmor | gpg --with-colons --show-keys - | grep ^fpr | sed 's/^fpr//' | sed 's/://g' | sed 's/^/  - /'
 nodejs_nodesource_gpg_fingerprints:
-  - 9FD3B784BC1C6FC31A8A0A1C1655A0AB68576280
-  - 302755F9E22EDC1ABB62E9B56C5CDECAAA01DA2C
+  - 6F71F525282841EEDAF851B42F59B5F99B1BE0B4
+  - 0FA5ECC8C0CA58863C0AC5867E9656125E955B26
 
 # Packages available will vary between distros, you can get the packages installed from this repo using
 # aptitude search "?origin (node) ?installed"
@@ -37,18 +37,12 @@ nodejs_nodesource_pkg:
 # Node.js release keys
 # https://github.com/nodejs/node#release-keys
 nodejs_release_keys:
-  - 4ED778F539E3634C779C87C6D7062848A1AB005C
-  - 141F07595B7B3FFE74309A937405533BE57C7D57
-  - 94AE36675C464D64BAFA68DD7434390BDBE9B9C5
-  - 74F12602B6F1C4E913FAA37AD3A89613643B6201
-  - 71DCFD284A79C3B38668286BC97EC7A07EDE3FC1
-  - 61FC681DFB92A079F1685E77973F295594EC4689
+  - C0D6248439F1D5604AAFFB4021D900FFDB233756
+  - DD792F5973C6DE52C432CBDAC77ABFA00DDBF2B7
+  - CC68F5A3106FF448322E48ED27F5E38D5B0A215F
   - 8FCCA13FEF1D0C2E91008E09770F7A9A5AE15600
-  - C4F0DFFF4E8C1A8236409D08E73BC641CC11F4C8
   - 890C08DB8579162FEE0DF9DB8BEAB4DFCF555EF4
   - C82FA3AE1CBEDC6BE46B9360C43CEC45C17AB93C
-  - DD8F2338BAE7501E3DD5AC78C273792F7D83545D
-  - A48C2BEE680E841632CD4E44F07496B3EB3C1762
   - 108F52B48DB57BB0CC439B2997B01419BD92F80A
-  - B9E2F5981AA6E0CD28160D9FF13993A75599653C
+  - A363A499291CBBC940DD62E41F10027AF002F8B0
 ...
