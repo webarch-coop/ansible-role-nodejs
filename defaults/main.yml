@@ -14,5 +14,6 @@ nodejs_install: nodesource
 nodejs_packages: []
 nodejs_src: false
 nodejs_verify: true
-nodejs_version: "20"
+# https://nodejs.org/en/about/previous-releases
+nodejs_version: "24"
 ...
