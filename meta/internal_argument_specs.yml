@@ -12,6 +12,18 @@ argument_specs:
   main:
     short_description: The main entry point for the nodejs role.
     options:
+      nodejs_installed:
+        type: dict
+        required: false
+        description: Results form running the ansible.builtin.command module.
+      nodejs_sources_contents:
+        type: dict
+        required: false
+        description: Results form running the ansible.builtin.slurp module.
+      nodejs_sources_contents_prior:
+        type: dict
+        required: false
+        description: Contents of the node.sources file in JSON format.
       nodejs_asc_file:
         type: dict
         required: false
