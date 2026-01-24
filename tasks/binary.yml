@@ -40,13 +40,15 @@
           ansible.builtin.debug:
             msg:
               - "Location: {{ nodejs_headers.location }}"
-              - "Path: {{ nodejs_headers.location | urlsplit('path') }}"
-              - "Version: {{ nodejs_headers.location | urlsplit('path') | basename | regex_replace('^v') | string }}"
+              - "Path: {{ nodejs_headers.location | ansible.builtin.urlsplit('path') }}"
+              - "Version: {{ nodejs_headers.location | ansible.builtin.urlsplit('path') | ansible.builtin.basename | ansible.builtin.regex_replace('^v') | ansible.builtin.string }}"
             verbosity: 2
+          tags:
+            - debug
 
         - name: Set a fact for the latest version of Node.js
           ansible.builtin.set_fact:
-            nodejs_version_latest: "{{ nodejs_headers.location | urlsplit('path') | basename | regex_replace('^v') | string }}"
+            nodejs_version_latest: "{{ nodejs_headers.location | ansible.builtin.urlsplit('path') | ansible.builtin.basename | ansible.builtin.regex_replace('^v') | ansible.builtin.string }}"
 
       when: nodejs_version == "latest"
 
@@ -69,35 +71,53 @@
 
         - name: Set a fact for the file name of the latest version for Node.js release x
           ansible.builtin.set_fact:
-            nodejs_version_x_file: "{{ line | regex_replace('[0-9a-z]{64}') | trim }}"
+            nodejs_version_x_file: "{{ nodejs_line | ansible.builtin.regex_replace('[0-9a-z]{64}') | ansible.builtin.trim }}"
           when:
-            - nodejs_arch in line
-            - line is regex('[.]tar[.]gz$')
-          loop: "{{ ( nodejs_sha256_b64encoded['content'] | b64decode | trim ).split('\n') }}"
+            - nodejs_arch in nodejs_line
+            - line is ansible.builtin.regex('[.]tar[.]gz$')
+          loop: "{{ ( nodejs_sha256_b64encoded['content'] | ansible.builtin.b64decode | ansible.builtin.trim ).split('\n') }}"
           loop_control:
-            loop_var: line
-            label: "{{ line | regex_replace('[0-9a-z]{64}') | trim }}"
+            loop_var: nodejs_line
+            label: "{{ nodejs_line | regex_replace('[0-9a-z]{64}') | ansible.builtin.trim }}"
 
         - name: Debug Node.js release x file
           ansible.builtin.debug:
             var: nodejs_version_x_file
             verbosity: 2
+          tags:
+            - debug
 
         - name: Set a fact for the version number for Node.js release x
           ansible.builtin.set_fact:
-            nodejs_version_x: "{{ nodejs_version_x_file | regex_replace('^node-v') | regex_replace(nodejs_arch) | regex_replace('-[.]tar[.]gz$') }}"
+            nodejs_version_x: "{{ nodejs_version_x_file | ansible.builtin.regex_replace('^node-v') | ansible.builtin.regex_replace(nodejs_arch) | ansible.builtin.regex_replace('-[.]tar[.]gz$') }}"
 
         - name: Debug Node.js release x
           ansible.builtin.debug:
             var: nodejs_version_x
             verbosity: 2
+          tags:
+            - debug
 
-      when: nodejs_version is regex ('^latest-v[0-9]{1,2}[.]x$')
+      when: nodejs_version is ansible.builtin.regex('^latest-v[0-9]{1,2}[.]x$')
 
     - name: Set a fact for the required version of Node.js
       ansible.builtin.set_fact:
-        nodejs_version_required: "{% if nodejs_version == 'latest' %}{{ nodejs_version_latest }}{% elif nodejs_version is regex('^latest-v[0-9]{1,2}[.]x$') %}{{ nodejs_version_x }}{% else %}{{ nodejs_version }}{% endif %}"
-        nodejs_version_required_v: "{% if nodejs_version == 'latest' %}v{{ nodejs_version_latest }}{% elif nodejs_version is regex('^latest-v[0-9]{1,2}[.]x$') %}v{{ nodejs_version_x }}{% else %}v{{ nodejs_version }}{% endif %}"
+        nodejs_version_required: >-
+                                 {%- if nodejs_version == 'latest' -%}
+                                 {{- nodejs_version_latest -}}
+                                 {%- elif nodejs_version is ansible.builtin.regex('^latest-v[0-9]{1,2}[.]x$') -%}
+                                 {{- nodejs_version_x -}}
+                                 {%- else -%}
+                                 {{- nodejs_version -}}
+                                 {%- endif -%}
+        nodejs_version_required_v: >-
+                                   {%- if nodejs_version == 'latest' -%}
+                                   v{{ nodejs_version_latest -}}
+                                   {%- elif nodejs_version is ansible.builtin.regex('^latest-v[0-9]{1,2}[.]x$') -%}
+                                   v{{ nodejs_version_x -}}
+                                   {%- else -%}
+                                   v{{ nodejs_version -}}
+                                   {%- endif -%}
 
     - name: Node.js GPG keys present
       ansible.builtin.include_tasks: gpg_recv_key.yml
@@ -141,14 +161,14 @@
         group: root
 
     - name: Node.js SHA256SUMS GPG signature checked
-      ansible.builtin.shell: |
-        set -e -o pipefail
-        grep node-v{{ nodejs_version_required }}-{{ nodejs_arch }}.tar.gz SHASUMS256.txt | sha256sum -c -
-      changed_when: false
-      check_mode: false
-      args:
+      ansible.builtin.shell:
+        cmd: |-
+             set -e -o pipefail
+             grep node-v{{ nodejs_version_required }}-{{ nodejs_arch }}.tar.gz SHASUMS256.txt | sha256sum -c -
         executable: "{{ ansible_facts.ansible_local.bash.path }}"
         chdir: "{{ nodejs_download_path }}"
+      check_mode: false
+      changed_when: false
 
     - name: Node.js lib directory present
       ansible.builtin.file:
@@ -165,11 +185,12 @@
         remote_src: true
 
     - name: Test node version
-      ansible.builtin.command: "/usr/local/lib/nodejs/node-v{{ nodejs_version_required }}-{{ nodejs_arch }}/bin/node -v"
+      ansible.builtin.command:
+        cmd: "/usr/local/lib/nodejs/node-v{{ nodejs_version_required }}-{{ nodejs_arch }}/bin/node -v"
       check_mode: false
       changed_when: false
       register: nodejs_test
-      failed_when: ( nodejs_test.stdout != nodejs_version_required_v )
+      failed_when: (nodejs_test.stdout != nodejs_version_required_v)
 
     - name: Node.js symlinks present
       ansible.builtin.file:
@@ -197,14 +218,14 @@
 
     - name: Install additional Node.js packages
       community.general.npm:
-        name: "{{ pkg }}"
+        name: "{{ nodejs_pkg }}"
         executable: "/usr/local/bin/npm"
         global: true
       loop: "{{ nodejs_packages }}"
       loop_control:
-        loop_var: pkg
+        loop_var: nodejs_pkg
       when:
-        - nodejs_packages is defined
+        - nodejs_packages is ansible.builtin.defined
         - nodejs_packages != []
 
   tags:

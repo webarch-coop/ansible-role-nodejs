@@ -8,13 +8,34 @@
 #
 # You should have received a copy of the GNU General Public License along with the Webarchitects Node.js Ansible role. If not, see <https://www.gnu.org/licenses/>.
 ---
-- name: Node.js GPG keys present
-  ansible.builtin.command:
-    cmd: "gpg --keyserver hkps://keys.openpgp.org --recv-keys {{ nodejs_fpr }}"
-  register: nodejs_recv_key
-  changed_when:
-    - ("not changed" not in nodejs_recv_key.stderr)
-    - ("skipped" not in nodejs_recv_key.stderr)
+- name: Install Node.js using distro apt package
+  block:
+
+    - name: Nodesource apt files and binary node and associated symlinks absent
+      Ansible.builtin.file:
+        path: "{{ nodejs_path }}"
+        state: absent
+      loop:
+        - /etc/apt/preferences.d/node.pref
+        - /etc/apt/sources.list.d/node.sources
+        - /usr/local/bin/corepack
+        - /usr/local/bin/node
+        - /usr/local/bin/nodejs
+        - /usr/local/bin/npm
+        - /usr/local/bin/npx
+        - /usr/share/keyrings/nodesource.gpg
+      loop_control:
+        loop_var: nodejs_path
+        label: "{{ nodejs_path | ansible.builtin.basename }}"
+
+    - name: Distro nodejs packages present
+      ansible.builtin.apt:
+        pkg:
+          - nodejs
+          - npm
+        update_cache: true
+        state: present
+
   tags:
     - nodejs
 ...

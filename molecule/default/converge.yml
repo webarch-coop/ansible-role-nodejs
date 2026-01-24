@@ -21,9 +21,14 @@
         var: ansible_facts.effective_user_id
         verbosity: 1
 
-    - name: Include nodejs role as root
+    - name: Include nodejs role
       ansible.builtin.include_role:
         name: nodejs
       vars:  # noqa var-naming[no-role-prefix]
         nodejs: true
+
+    - name: Include nodejs role verify argument spec tasks
+      ansible.builtin.include_role:
+        name: nodejs
+        tasks_from: verify.yml
 ...

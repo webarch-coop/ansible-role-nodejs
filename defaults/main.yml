@@ -10,10 +10,21 @@
 ---
 nodejs: false
 nodejs_download_path: /root/nodejs
-nodejs_install: nodesource
+nodejs_install: >-
+                {%- if ansible_facts.distribution_version is defined -%}
+                {%-     if (ansible_facts.distribution_version != "n/a") and (ansible_facts.distribution_version is ansible.builtin.version('13', '>=')) -%}
+                distro
+                {%-     elif (ansible_facts.distribution_version == "n/a") and (ansible_facts.distribution_release == "forky") -%}
+                distro
+                {%-     else -%}
+                nodesource
+                {%-     endif -%}
+                {%- else -%}
+                nodesource
+                {%- endif -%}
 nodejs_packages: []
 nodejs_src: false
 nodejs_verify: true
 # https://nodejs.org/en/about/previous-releases
-nodejs_version: "24"
+nodejs_version: "20"
 ...

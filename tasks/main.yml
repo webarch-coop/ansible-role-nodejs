@@ -11,7 +11,7 @@
 - name: Skip the tasks in this role as nodejs is false
   ansible.builtin.debug:
     msg: "The nodejs variable need to be true for the tasks in this role to run."
-  when: not nodejs | bool
+  when: not nodejs | ansible.builtin.bool
   tags:
     - nodejs
 
@@ -21,17 +21,17 @@
     - name: Variables checked using the argument spec
       ansible.builtin.include_tasks: verify.yml
       when:
-        - nodejs_verify is defined
-        - nodejs_verify | bool
+        - nodejs_verify is ansible.builtin.defined
+        - nodejs_verify | ansible.builtin.bool
       tags:
         - nodejs_verify
 
     - name: Binary install variables checked
       ansible.builtin.assert:
         that: >-
-          ( nodejs_version == "latest" ) or
-          ( nodejs_version is regex ('^latest-v[0-9]{1,2}[.]x$') ) or
-          ( nodejs_version is regex ('^[0-9]{1,2}[.][0-9]{1,2}[.][0-9]{1,2}$') )
+          (nodejs_version == "latest") or
+          (nodejs_version is regex ('^latest-v[0-9]{1,2}[.]x$')) or
+          (nodejs_version is regex ('^[0-9]{1,2}[.][0-9]{1,2}[.][0-9]{1,2}$'))
         quiet: "{% if ansible_verbosity == 0 %}true{% else %}false{% endif %}"
       when: nodejs_install == "binary"
 
@@ -42,14 +42,14 @@
         quiet: "{% if ansible_verbosity == 0 %}true{% else %}false{% endif %}"
       when: nodejs_install == "nodesource"
 
-    - name: Include apt role local fact tasks if variables are not defined
+    - name: Include apt role local fact tasks if variables are not ansible.builtin.defined
       ansible.builtin.include_role:
         name: apt
         tasks_from: local_facts.yml
-      when: >
-        ( ansible_facts.ansible_local.bash.path is not defined ) or
-        ( ansible_facts.ansible_local.dpkg.arch is not defined ) or
-        ( ansible_facts.ansible_local.gpg.version is not defined )
+      when: >-
+        (ansible_facts.ansible_local.bash.path is not ansible.builtin.defined) or
+        (ansible_facts.ansible_local.dpkg.arch is not ansible.builtin.defined) or
+        (ansible_facts.ansible_local.gpg.version is not ansible.builtin.defined)
 
     - name: Include Node.js nodesource install tasks
       ansible.builtin.include_tasks: nodesource.yml
@@ -59,7 +59,11 @@
       ansible.builtin.include_tasks: binary.yml
       when: nodejs_install == "binary"
 
-  when: nodejs | bool
+    - name: Include Node.js distro install tasks
+      ansible.builtin.include_tasks: distro.yml
+      when: nodejs_install == "distro"
+
+  when: nodejs | ansible.builtin.bool
   tags:
     - nodejs
 ...

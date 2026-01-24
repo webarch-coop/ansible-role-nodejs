@@ -17,7 +17,8 @@
   tasks:
 
     - name: Which Node.js
-      ansible.builtin.command: which node
+      ansible.builtin.command:
+        cmd: which node
       check_mode: false
       changed_when: false
       register: molecule_which_node
@@ -27,7 +28,8 @@
         var: molecule_which_node.stdout
 
     - name: Check Node.js version
-      ansible.builtin.command: node --version
+      ansible.builtin.command:
+        cmd: node --version
       check_mode: false
       changed_when: false
       register: molecule_node_version

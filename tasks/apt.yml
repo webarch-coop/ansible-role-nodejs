@@ -19,21 +19,25 @@
 
     - name: List legacy Node.js apt list files to be disabled
       ansible.builtin.debug:
-        msg: "apt list file {{ file.path }} to be moved to {{ file.path }}.ansible.save"
+        msg: "apt list file {{ nodejs_file.path }} to be moved to {{ nodejs_file.path }}.ansible.save"
       loop: "{{ nodejs_old_apt_list_files.files }}"
       loop_control:
-        loop_var: file
-        label: "{{ file.path | basename }}"
-      when: ( nodejs_old_apt_list_files.matched >= 1 )
+        loop_var: nodejs_file
+        label: "{{ nodejs_file.path | ansible.builtin.basename }}"
+      when: (nodejs_old_apt_list_files.matched >= 1)
+      tags:
+        - debug
 
     - name: Disable legacy Node.js apt list files
-      ansible.builtin.command: "mv {{ file.path }} {{ file.path }}.ansible.save"
+      ansible.builtin.command:
+        cmd: "mv {{ nodejs_file.path }} {{ nodejs_file.path }}.ansible.save"
+        creates: "{{ nodejs_file.path }}.ansible.save"
+        removes: "{{ nodejs_file.path }}"
       loop: "{{ nodejs_old_apt_list_files.files }}"
       loop_control:
-        loop_var: file
-        label: "{{ file.path | basename }}"
-      when: ( nodejs_old_apt_list_files.matched >= 1 )
-      changed_when: true
+        loop_var: nodejs_file
+        label: "{{ nodejs_file.path | ansible.builtin.basename }}"
+      when: (nodejs_old_apt_list_files.matched >= 1)
 
     - name: Legacy Node.js GPG key absent
       ansible.builtin.apt_key:
@@ -73,17 +77,17 @@
           register: nodejs_gpg_file
 
         - name: Node.js GPG key dearmored
-          ansible.builtin.shell: |-
-            set -e -o pipefail
-            gpg --dearmor < /root/nodesource.asc > /usr/share/keyrings/nodesource.gpg
-            chmod 644 /usr/share/keyrings/nodesource.gpg
-          args:
+          ansible.builtin.shell:
+            cmd: |-
+                 set -e -o pipefail
+                 gpg --dearmor < /root/nodesource.asc > /usr/share/keyrings/nodesource.gpg
+                 chmod 644 /usr/share/keyrings/nodesource.gpg
             executable: "{{ ansible_facts.ansible_local.bash.path }}"
           check_mode: false
           changed_when: false
           when:
-            ( nodejs_gpg_asc_file.changed | bool ) or
-            ( not nodejs_gpg_file.stat.exists | bool )
+            (nodejs_gpg_asc_file.changed | ansible.builtin.bool) or
+            (not nodejs_gpg_file.stat.exists | ansible.builtin.bool)
 
         - name: Stat Node.js GPG dearmored file
           ansible.builtin.stat:
@@ -91,27 +95,35 @@
           register: nodejs_gpg_file
 
         - name: Node.js GPG key check command
-          ansible.builtin.command: >
-            gpg --with-colons
-            {% if ansible_facts.ansible_local.gpg.version is version('2.2.12', '<') %}
-            --with-fingerprint --with-subkey-fingerprint
-            {% else %}
-            --show-keys
-            {% endif %}
-            /usr/share/keyrings/nodesource.gpg
-          when: nodejs_gpg_file.stat.exists | bool
+          ansible.builtin.command:
+            cmd: >-
+                 gpg --with-colons
+                 {% if ansible_facts.ansible_local.gpg.version is version('2.2.12', '<') %}
+                 --with-fingerprint --with-subkey-fingerprint
+                 {% else %}
+                 --show-keys
+                 {% endif %}
+                 /usr/share/keyrings/nodesource.gpg
           check_mode: false
           changed_when: false
           register: nodejs_gpg
+          when: nodejs_gpg_file.stat.exists | ansible.builtin.bool
 
         - name: Set a fact for the GPG fingerprints
           ansible.builtin.set_fact:
-            nodejs_nodesource_gpg_fingerprints_found: "{{ nodejs_gpg.stdout | string | community.general.jc('gpg') | community.general.json_query('[?type==`fpr`].user_id') | list }}"
+            nodejs_nodesource_gpg_fingerprints_found: >-
+                                                      {{- nodejs_gpg.stdout
+                                                      | ansible.builtin.string
+                                                      | community.general.jc('gpg')
+                                                      | community.general.json_query('[?type==`fpr`].user_id')
+                                                      | ansible.builtin.list -}}
 
         - name: Debug GPG fingerprints
           ansible.builtin.debug:
             var: nodejs_nodesource_gpg_fingerprints_found
             verbosity: 2
+          tags:
+            - debug
 
         - name: Node.js GPG key check only first fingerprint for GPG versions less that 2.2.12
           ansible.builtin.assert:
@@ -126,7 +138,7 @@
               - nodejs_nodesource_gpg_fingerprints_found | difference(nodejs_nodesource_gpg_fingerprints) | length == 0
               - nodejs_nodesource_gpg_fingerprints | difference(nodejs_nodesource_gpg_fingerprints_found) | length == 0
             quiet: "{% if ansible_verbosity == 0 %}true{% else %}false{% endif %}"
-          when: ( ansible_facts.ansible_local.gpg.version is version('2.2.12', '>=') )
+          when: ansible_facts.ansible_local.gpg.version is ansible.builtin.version('2.2.12', '>=')
 
         - name: Stat Node.js apt sources file
           ansible.builtin.stat:
@@ -143,17 +155,23 @@
 
             - name: Decode the base64 encoded version of /etc/apt/sources.list.d/node.sources
               ansible.builtin.set_fact:
-                nodejs_sources_contents: "{{ nodejs_sources_contents_b64encoded['content'] | ansible.builtin.b64decode | string | community.general.jc('ini') }}"
+                nodejs_sources_contents: >-
+                                         {{- nodejs_sources_contents_b64encoded['content']
+                                         | ansible.builtin.b64decode
+                                         | ansible.builtin.string
+                                         | community.general.jc('ini') -}}
 
             - name: Print the contents of /etc/apt/sources.list.d/node.sources
               ansible.builtin.debug:
                 var: nodejs_sources_contents
-                verbosity: "{% if ansible_check_mode | bool or ansible_diff_mode | bool %}1{% else %}2{% endif %}"
+                verbosity: "{% if ansible_check_mode | ansible.builtin.bool or ansible_diff_mode | ansible.builtin.bool %}1{% else %}2{% endif %}"
+              tags:
+                - debug
 
             - name: Set a fact for the prior Node.js repository sources file contents
               ansible.builtin.set_fact:
                 nodejs_sources_contents_prior: "{{ nodejs_sources_contents }}"
-              when: nodejs_sources_contents is defined
+              when: nodejs_sources_contents is ansible.builtin.defined
 
             - name: Check Node.js repository sources file present
               ansible.builtin.deb822_repository:
@@ -178,7 +196,9 @@
             - name: Debug proposed nodejs_sources_check.repo
               ansible.builtin.debug:
                 var: nodejs_sources_check.repo
-                verbosity: "{% if ansible_check_mode | bool or ansible_diff_mode | bool %}1{% else %}2{% endif %}"
+                verbosity: "{% if ansible_check_mode | ansible.builtin.bool or ansible_diff_mode | ansible.builtin.bool %}1{% else %}2{% endif %}"
+              tags:
+                - debug
 
             - name: Backup old nodejs.sources file
               ansible.builtin.command:
@@ -186,14 +206,13 @@
                   mv
                   /etc/apt/sources.list.d/node.sources
                   /etc/apt/sources.list.d/.nodejs.sources.{{ nodejs_date_timestamp }}.ansible.save
-              args:
                 creates: "/etc/apt/sources.list.d/.nodejs.sources.{{ nodejs_date_timestamp }}.ansible.save"
                 removes: /etc/apt/sources.list.d/node.sources
               vars:
                 nodejs_date_timestamp: "{{ ansible_facts.date_time.iso8601_basic_short }}"
-              when: nodejs_sources_contents_prior != nodejs_sources_check.repo | string | community.general.jc('ini')
+              when: nodejs_sources_contents_prior != nodejs_sources_check.repo | ansible.builtin.string | community.general.jc('ini')
 
-          when: nodejs_sources_path.stat.exists | bool
+          when: nodejs_sources_path.stat.exists | ansible.builtin.bool
 
         - name: Node.js apt sources file present
           ansible.builtin.deb822_repository:
@@ -219,20 +238,20 @@
             - name: Debug updated nodejs_sources.repo
               ansible.builtin.debug:
                 var: nodejs_sources.repo
-                verbosity: "{% if ansible_check_mode | bool or ansible_diff_mode | bool %}1{% else %}2{% endif %}"
+                verbosity: "{% if ansible_check_mode | ansible.builtin.bool or ansible_diff_mode | ansible.builtin.bool %}1{% else %}2{% endif %}"
 
             - name: Diff Node.js repository sources file update
               ansible.utils.fact_diff:
                 before: "{{ nodejs_sources_contents_prior | ansible.builtin.to_nice_yaml }}"
-                after: "{{ nodejs_sources.repo | string | community.general.jc('ini') | ansible.builtin.to_nice_yaml }}"
+                after: "{{ nodejs_sources.repo | ansible.builtin.string | community.general.jc('ini') | ansible.builtin.to_nice_yaml }}"
               when:
-                - ( ansible_check_mode | bool ) or ( ansible_diff_mode | bool )
-                - nodejs_sources_contents_prior is defined
-                - nodejs_sources.repo is defined
+                - (ansible_check_mode | ansible.builtin.bool) or (ansible_diff_mode | ansible.builtin.bool)
+                - nodejs_sources_contents_prior is ansible.builtin.defined
+                - nodejs_sources.repo is ansible.builtin.defined
 
-          when: nodejs_sources.changed | bool
+          when: nodejs_sources.changed | ansible.builtin.bool
 
-      when: ( nodejs_asc_file.stat.exists | bool )
+      when: (nodejs_asc_file.stat.exists | ansible.builtin.bool)
 
     - name: Node.js apt preferences present
       ansible.builtin.template:
@@ -246,7 +265,7 @@
     - name: Update APT cache
       ansible.builtin.apt:
         update_cache: true
-      when: ( nodejs_sources.changed | bool ) or ( nodejs_preferences.changed | bool )
+      when: (nodejs_sources.changed | ansible.builtin.bool) or (nodejs_preferences.changed | ansible.builtin.bool)
 
   tags:
     - nodejs

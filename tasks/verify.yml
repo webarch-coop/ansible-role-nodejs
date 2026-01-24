@@ -14,17 +14,21 @@
     - name: Debug the hostvars variable names that start with nodejs_
       ansible.builtin.debug:
         var: nodejsvarnames
-        verbosity: "{% if ansible_check_mode | bool %}3{% else %}4{% endif %}"
+        verbosity: "{% if ansible_check_mode | ansible.builtin.bool %}3{% else %}4{% endif %}"
+      tags:
+        - debug
 
     - name: Debug the hostvars variable names that start with nodejs_
       ansible.builtin.debug:
         var: nodejshostvars
-        verbosity: "{% if ansible_check_mode | bool %}3{% else %}4{% endif %}"
+        verbosity: "{% if ansible_check_mode | ansible.builtin.bool %}3{% else %}4{% endif %}"
+      tags:
+        - debug
 
     - name: Set a fact for the argument spec and internal argument spec
       ansible.builtin.set_fact:
-        nodejs_argument_spec: "{{ (lookup('ansible.builtin.file', 'meta/argument_specs.yml') | from_yaml) }}"
-        nodejs_internal_argument_spec: "{{ (lookup('ansible.builtin.file', 'meta/internal_argument_specs.yml') | from_yaml) }}"
+        nodejs_argument_spec: "{{ (lookup('ansible.builtin.file', 'meta/argument_specs.yml') | ansible.builtin.from_yaml) }}"
+        nodejs_internal_argument_spec: "{{ (lookup('ansible.builtin.file', 'meta/internal_argument_specs.yml') | ansible.builtin.from_yaml) }}"
 
     - name: Set a fact for the combined argument spec and internal argument spec
       ansible.builtin.set_fact:
@@ -36,8 +40,8 @@
         provided_arguments: "{{ nodejshostvars }}"
 
   when:
-    - nodejs_verify is defined
-    - nodejs_verify | bool
+    - nodejs_verify is ansible.builtin.defined
+    - nodejs_verify | ansible.builtin.bool
   tags:
     - nodejs
     - nodejs_verify
