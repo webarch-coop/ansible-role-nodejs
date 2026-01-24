@@ -11,6 +11,19 @@
 - name: Install Node.js using distro apt package
   block:
 
+    - name: Run apt policy nodejs
+      ansible.builtin.command:
+        cmd: apt policy nodejs
+      check_mode: false
+      changed_when: false
+      register: nodejs_apt_policy
+
+    - name: Debug nodejs_apt_policy
+      ansible.builtin.debug:
+        var: nodejs_apt_policy
+      tags:
+        - debug
+
     - name: Nodesource apt files and binary node and associated symlinks absent
       ansible.builtin.file:
         path: "{{ nodejs_path }}"
