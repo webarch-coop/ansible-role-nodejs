@@ -12,7 +12,7 @@
   block:
 
     - name: Nodesource apt files and binary node and associated symlinks absent
-      Ansible.builtin.file:
+      ansible.builtin.file:
         path: "{{ nodejs_path }}"
         state: absent
       loop:
