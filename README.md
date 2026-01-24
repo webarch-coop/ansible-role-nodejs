@@ -2,7 +2,7 @@
 
 [![pipeline status](https://git.coop/webarch/nodejs/badges/master/pipeline.svg)](https://git.coop/webarch/nodejs/-/commits/master)
 
-This repository contains an Ansible role for installing [Node.js](https://nodejs.org/en/about/releases/), on Debian and Ubuntu using either [binary packages](https://github.com/nodejs/help/wiki/Installation#how-to-install-nodejs-via-binary-archive-on-linux) or [NodeSource apt packages](https://github.com/nodesource/distributions/blob/master/README.md#installation-instructions).
+This repository contains an Ansible role for installing [Node.js](https://nodejs.org/en/about/releases/), on Debian and Ubuntu using either [binary packages](https://github.com/nodejs/help/wiki/Installation#how-to-install-nodejs-via-binary-archive-on-linux) or [NodeSource apt packages](https://github.com/nodesource/distributions/blob/master/README.md#installation-instructions) or, in the future the distro version &mdash; the plan is to update this role remove NodeSource and binary packages in favour of the [Debian packages version](https://packages.debian.org/trixie/nodejs) as this means that [Corepack](https://packages.debian.org/trixie/node-corepack) can also be installed as NodeSource [are stopping shipping Corepack](https://nodejs.org/docs/v24.13.0/api/corepack.html#corepack) with version 25.
 
 See the [Node.js vulnerabilities blog](https://nodejs.org/en/blog/vulnerability/) and the [GitHub node releases](https://github.com/nodejs/node/releases) for the latest versions.
 

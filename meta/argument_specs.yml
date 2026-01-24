@@ -26,6 +26,7 @@ argument_specs:
         description: Node.js install method.
         choices:
           - binary
+          - distro
           - nodesource
       nodejs_packages:
         type: list
