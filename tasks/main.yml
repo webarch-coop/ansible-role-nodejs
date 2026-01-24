@@ -30,15 +30,15 @@
       ansible.builtin.assert:
         that: >-
           (nodejs_version == "latest") or
-          (nodejs_version is regex ('^latest-v[0-9]{1,2}[.]x$')) or
-          (nodejs_version is regex ('^[0-9]{1,2}[.][0-9]{1,2}[.][0-9]{1,2}$'))
+          (nodejs_version is ansible.builtin.regex('^latest-v[0-9]{1,2}[.]x$')) or
+          (nodejs_version is ansible.builtin.regex('^[0-9]{1,2}[.][0-9]{1,2}[.][0-9]{1,2}$'))
         quiet: "{% if ansible_verbosity == 0 %}true{% else %}false{% endif %}"
       when: nodejs_install == "binary"
 
     - name: Nodesource install variables checked
       ansible.builtin.assert:
         that:
-          - nodejs_version is regex ('^[0-9]{2}$')
+          - nodejs_version is ansible.builtin.regex('^[0-9]{2}$')
         quiet: "{% if ansible_verbosity == 0 %}true{% else %}false{% endif %}"
       when: nodejs_install == "nodesource"
 

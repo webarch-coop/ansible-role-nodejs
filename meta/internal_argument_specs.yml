@@ -12,6 +12,59 @@ argument_specs:
   main:
     short_description: The main entry point for the nodejs role.
     options:
+      nodejs_asc_file:
+        type: dict
+        required: false
+        description: Results form running the ansible.builtin.stat module.
+      nodejs_gpg:
+        type: dict
+        required: false
+        description: Results form running the ansible.builtin.command module.
+      nodejs_gpg_asc_file:
+        type: dict
+        required: false
+        description: Results form running the ansible.builtin.get_url module.
+      nodejs_gpg_file:
+        type: dict
+        required: false
+        description: Results form running the ansible.builtin.stat module.
+      nodejs_installed_check:
+        type: dict
+        required: false
+        description: Results form running the ansible.builtin.command module.
+      nodejs_nodesource_gpg_fingerprints_found:
+        type: list
+        elements: str
+        required: false
+        description: List of GPG fingerprints.
+      nodejs_old_apt_list_files:
+        type: dict
+        required: false
+        description: Results form running the ansible.builtin.find module.
+      nodejs_path_check:
+        type: dict
+        required: false
+        description: Results form running the ansible.builtin.stat module.
+      nodejs_preferences:
+        type: dict
+        required: false
+        description: Results form running the ansible.builtin.template module.
+      nodejs_sources:
+        type: dict
+        required: false
+        description: Results form running the ansible.builtin.deb822_repository module.
+      nodejs_sources_check:
+        type: dict
+        required: false
+        description: Results form running the ansible.builtin.deb822_repository module.
+      nodejs_sources_contents_b64encoded:
+        type: dict
+        required: false
+        description: Results form running the ansible.builtin.slurp module.
+      nodejs_sources_path:
+        type: dict
+        required: false
+        description: Results form running the ansible.builtin.stat module.
       nodejs_argument_spec:
         type: dict
         required: true
