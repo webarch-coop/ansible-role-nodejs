@@ -21,7 +21,7 @@
     - name: Debug nodejs_apt_cache_show_nodejs
       ansible.builtin.debug:
         var: nodejs_apt_cache_show_nodejs
-        verbosity: "{% if (ansible_check_mode | ansible.builtin.bool) or (ansible_diff_mode | ansible.builtin.bool) %}0{% else %}1{% endif %}"
+        verbosity: "{% if (ansible_check_mode | ansible.builtin.bool) or (ansible_diff_mode | ansible.builtin.bool) %}2{% else %}3{% endif %}"
       tags:
         - debug
 
@@ -32,7 +32,7 @@
     - name: Debug nodejs_apt_cache_show
       ansible.builtin.debug:
         var: nodejs_apt_cache_show
-        verbosity: "{% if (ansible_check_mode | ansible.builtin.bool) or (ansible_diff_mode | ansible.builtin.bool) %}0{% else %}1{% endif %}"
+        verbosity: "{% if (ansible_check_mode | ansible.builtin.bool) or (ansible_diff_mode | ansible.builtin.bool) %}1{% else %}2{% endif %}"
       tags:
         - debug
 
