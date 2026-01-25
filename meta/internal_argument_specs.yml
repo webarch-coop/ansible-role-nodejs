@@ -12,14 +12,18 @@ argument_specs:
   main:
     short_description: The main entry point for the nodejs role.
     options:
-      nodejs_apt_policy:
+      yarn_apt_cache_show_nodejs:
         type: dict
         required: false
-        description: Results form running the ansible.builtin.command module.
+        description: Results from running apt-cache show nodejs using the ansible.builtin.command module.
+      yarn_apt_cache_show:
+        type: list
+        required: false
+        description: Results from JC converting apt-cache show nodejs results into a list.
       nodejs_installed:
-        type: dict
+        type: int
         required: false
-        description: Results form running the ansible.builtin.command module.
+        description: Interger for the installed nodejs version.
       nodejs_sources_contents:
         type: dict
         required: false

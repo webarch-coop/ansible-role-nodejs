@@ -28,6 +28,19 @@ argument_specs:
           - binary
           - distro
           - nodesource
+      nodejs_maintainer:
+        type: dict
+        required: true
+        description: Dictionary of node apt package maintainers.
+        options:
+          debian:
+            type: str
+            required: true
+            description: The Debian nodejs maintainer.
+          nodesource:
+            type: str
+            required: true
+            description: The sodesource nodejs maintainer.
       nodejs_packages:
         type: list
         elements: str

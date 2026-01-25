@@ -11,6 +11,39 @@
 - name: Install Node.js using nodesource apt package
   block:
 
+    - name: Run apt-cache show nodejs
+      ansible.builtin.command:
+        cmd: apt-cache show nodejs
+      check_mode: false
+      changed_when: false
+      register: nodejs_apt_cache_show_nodejs
+
+    - name: Debug nodejs_apt_cache_show_nodejs
+      ansible.builtin.debug:
+        var: nodejs_apt_cache_show_nodejs
+      tags:
+        - debug
+
+    - name: Set a fact for the results of apt-cache show nodejs
+      ansible.builtin.set_fact:
+        nodejs_apt_cache_show: "{{ nodejs_apt_cache_show_nodejs.stdout | community.general.jc('apt_cache_show') }}"
+
+    - name: Debug nodejs_apt_cache_show
+      ansible.builtin.debug:
+        var: nodejs_apt_cache_show
+      tags:
+        - debug
+
+    - name: Debian nodejs apt package absent
+      ansible.builtin.apt:
+        pkg:
+          - nodejs
+        update_cache: true
+        state: absent
+      when:
+        - yarn_apt_cache_show[0].maintainer is defined
+        - yarn_apt_cache_show[0].maintainer == yarn_maintainer.debian
+
     - name: Include APT tasks
       ansible.builtin.include_tasks: apt.yml
       tags:

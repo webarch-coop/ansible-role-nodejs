@@ -14,6 +14,11 @@ ansible_managed: Ansible managed
 nodejsvarnames: "{{ q('varnames', '^nodejs_') | sort }}"
 nodejshostvars: "{{ dict(nodejsvarnames | list | zip(q('vars', *nodejsvarnames))) }}"
 
+# Package maintainer shown by apt-cache show nodejs
+nodejs_maintainer:
+  debian: "Debian Javascript Maintainers <pkg-javascript-devel@alioth-lists.debian.net>"
+  nodesource: "NodeSource Support <support@nodesource.com>"
+
 # ASCII armored GPG public key URL linked from
 # https://github.com/nodesource/distributions/blob/master/README.md#installation-instructions
 nodejs_nodesource_gpg_url: https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key
